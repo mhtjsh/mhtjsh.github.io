@@ -1,1 +1,136 @@
-<h1> Under Construction! </h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Notes | mhtjsh</title>
+  <style>
+    :root {
+      --paper: #fcfaf6;
+      --ink: #2b2b2b;
+      --muted: #6b6b6b;
+      --accent: #a65f2a;
+      --line: #ded8ce;
+      --card: #fffdf9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.65;
+    }
+
+    .layout {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 4rem;
+    }
+
+    .kicker {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin: 0 0 0.75rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.15;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-top: 0.8rem;
+      max-width: 65ch;
+    }
+
+    section {
+      margin-top: 2.5rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1.3rem 1.2rem;
+    }
+
+    h2 {
+      margin: 0 0 0.7rem;
+      font-size: 1.35rem;
+      color: var(--accent);
+    }
+
+    ul {
+      margin: 0.3rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    li + li {
+      margin-top: 0.35rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      border-top: 1px solid var(--line);
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <p class="kicker">Research Introduction</p>
+    <h1>Hi, I’m mhtjsh.</h1>
+    <p class="subtitle">
+      I study ideas at the intersection of reasoning, technology, and social systems.
+      This page is a live introduction for my GitHub + writing presence, inspired by
+      the clean, essay-first feel of LessWrong.
+    </p>
+
+    <section>
+      <h2>Current Focus</h2>
+      <ul>
+        <li>Mechanistic clarity: making complicated systems explainable and testable.</li>
+        <li>Decision quality under uncertainty, with practical tools and workflows.</li>
+        <li>AI alignment and governance questions that matter for real-world deployment.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What You’ll Find Here</h2>
+      <ul>
+        <li>Research notes and working hypotheses.</li>
+        <li>Small, reproducible code experiments.</li>
+        <li>Long-form writing connecting technical details to bigger-picture implications.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Links</h2>
+      <ul>
+        <li><a href="https://github.com/mhtjsh">GitHub Profile</a></li>
+        <li><a href="https://www.lesswrong.com">LessWrong</a></li>
+      </ul>
+    </section>
+
+    <p class="footer">
+      This page is intentionally lightweight so ideas stay central. More posts and project links coming soon.
+    </p>
+  </main>
+</body>
+</html>
