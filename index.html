@@ -1,134 +1,466 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Research Notes | mhtjsh</title>
-  <style>
-    :root {
-      --paper: #fcfaf6;
-      --ink: #2b2b2b;
-      --muted: #6b6b6b;
-      --accent: #a65f2a;
-      --line: #ded8ce;
-      --card: #fffdf9;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      color: var(--ink);
-      background: var(--paper);
-      line-height: 1.65;
-    }
-
-    .layout {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 3rem 1.25rem 4rem;
-    }
-
-    .kicker {
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-size: 0.8rem;
-      margin: 0 0 0.75rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 5vw, 3rem);
-      line-height: 1.15;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 1.1rem;
-      margin-top: 0.8rem;
-      max-width: 65ch;
-    }
-
-    section {
-      margin-top: 2.5rem;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 1.3rem 1.2rem;
-    }
-
-    h2 {
-      margin: 0 0 0.7rem;
-      font-size: 1.35rem;
-      color: var(--accent);
-    }
-
-    ul {
-      margin: 0.3rem 0 0;
-      padding-left: 1.2rem;
-    }
-
-    li + li {
-      margin-top: 0.35rem;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-
-    .footer {
-      margin-top: 2rem;
-      color: var(--muted);
-      font-size: 0.95rem;
-      border-top: 1px solid var(--line);
-      padding-top: 1rem;
-    }
-  </style>
+  <title>Mohit Joshi</title>
+  <meta name="description" content="Mohit Joshi -researcher working on reinforcement learning for medical AI, novel loss function design, drug repurposing, and consciousness in language models. B.Tech Biotechnology, research at IIT Bombay and UCSF.">
+  <meta name="keywords" content="Mohit Joshi, MoJo, reinforcement learning, medical AI, size penalty loss, IIT Bombay, UCSF, machine learning, drug repurposing, consciousness language models, computer vision">
+  <meta name="author" content="Mohit Joshi">
+  <meta property="og:title" content="Mohit Joshi">
+  <meta property="og:description" content="Researcher working on reinforcement learning, medical AI, loss function design, and consciousness in language models.">
+  <meta property="og:type" content="profile">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="assets/img/perfect_sign.jpg" type="image/jpeg">
 </head>
 <body>
-  <main class="layout">
-    <p class="kicker">Research Introduction</p>
-    <h1>Hi, I’m mhtjsh.</h1>
-    <p class="subtitle">
-      I study ideas at the intersection of reasoning, technology, and social systems.
-      This page is a live introduction for my GitHub + writing presence.
-    </p>
+  <div id="progress"></div>
 
-    <section>
-      <h2>Current Focus</h2>
-      <ul>
-        <li>Mechanistic clarity: making complicated systems explainable and testable.</li>
-        <li>Decision quality under uncertainty, with practical tools and workflows.</li>
-        <li>AI alignment and governance questions that matter for real-world deployment.</li>
+  <!-- ===== Top Navbar (arcaman07 style) ===== -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">Home</a>
+      <div style="display:flex;align-items:center;gap:0;">
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#about" class="active">About</a></li>
+          <li><a href="#research">Research</a></li>
+          <li><a href="#ideas">Ideas</a></li>
+          <li><a href="#news">News</a></li>
+        </ul>
+        <div class="nav-right">
+          <button id="light-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+          <button class="nav-toggle" id="menuToggle" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== LessWrong-style TOC Sidebar ===== -->
+  <nav class="toc-sidebar" id="tocSidebar">
+    <div class="toc-rail"></div>
+    <div class="toc-dots">
+      <div class="toc-dot active"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+      <div class="toc-dot"></div>
+    </div>
+    <div class="toc-panel">
+      <div class="toc-title">Contents</div>
+      <ul class="toc-list">
+        <li><a href="#about">About</a></li>
+        <li><a href="#highlights">Research Highlights</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#research">Research Projects</a></li>
+        <li><a href="#exploratory">Exploratory Projects</a></li>
+        <li><a href="#ideas">Ideas &amp; Directions</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#awards">Awards</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== Main Content ===== -->
+  <div class="container">
+
+    <!-- ========== ABOUT ========== -->
+    <section class="about" id="about">
+      <div class="clearfix">
+        <div class="profile">
+          <div class="img-wrap"><img src="assets/img/profile.png" alt="Mohit Joshi"></div>
+          <div class="social">
+            <a href="mailto:mpjoshi2425@gmail.com" title="Email"><i class="fa-solid fa-envelope"></i></a>
+            <a href="https://github.com/mhtjsh" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/mohitjoshi2425/" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="https://x.com/mojoshi_" target="_blank" title="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="assets/docs/Resume.pdf" target="_blank" title="CV / Resume"><i class="fa-solid fa-file-pdf"></i></a>
+          </div>
+        </div>
+        <div class="about-content">
+          <h1>Mohit Joshi</h1>
+          <p class="lead">Researcher at <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">IIT Bombay KCDH</a> &amp; <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">UCSF Department of Medicine</a></p>
+          <p>
+            I got into machine learning research through the medical domain: starting with
+            <strong>medical reasoning in language models</strong>, then moving into
+            <strong>uncertainty quantification</strong> for clinical NLP, and eventually into
+            <strong>computer vision for stroke segmentation</strong>, where I designed a
+            <a href="https://mhtjsh.github.io/Size-Penalty-Loss-Function/" target="_blank">novel mathematical loss function</a>
+            that became my undergraduate thesis.
+          </p>
+          <p>
+            Alongside this, I started working with
+            <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">Dr. Vivek Rudrapatna</a> at UCSF
+            on applying <strong>reinforcement learning to sparse medical data</strong> -specifically
+            drug repurposing from electronic health records. That work is pushing me toward
+            what I'm most interested in now: <strong>non-rewardable RL for language models</strong>
+            and studying <strong>consciousness in recursive language architectures</strong>.
+          </p>
+          <p>
+            My research interests sit at the intersection of <strong>Psychology, Mathematics, and Machine Learning</strong>.
+            I'm drawn to problems like <i> implicit rewards (non Non-rewardable RL) </i> through
+            <strong><a href="https://arxiv.org/abs/2601.03220" target="_blank" style="color: inherit;">Epiplexity</a></strong> &
+            <strong> consciousness in reasoning</strong> through <a href="https://arxiv.org/abs/2512.24601"
+              target="_blank" style="color: inherit;">Recursive Language Model</a>.
+          </p>
+          <p>
+            I am also interested in exploring other areas - currently I am interested in <strong>Scientific Computing</strong> &
+            <strong>Mathematical Biology (Dynamical Modelling)</strong> for the sake of 'Serendipity' in my Research.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== RESEARCH HIGHLIGHTS ========== -->
+    <section class="section" id="highlights">
+      <h2>Research Highlights</h2>
+      <div class="highlights">
+        <h3>Non-Rewardable Reinforcement Learning (active work)</h3>
+        <ul>
+          <li>Offline RL and causal inference for drug repurposing environments</li>
+          <li>Implicit rewards and Epiplexity in recursive language models for domain-agnostic reasoning</li>
+        </ul>
+        <h3>Medical AI &amp; Computer Vision</h3>
+        <ul>
+          <li><a href="https://mhtjsh.github.io/Size-Penalty-Loss-Function/" target="_blank">Size Penalty Loss</a> -novel size-stratified volume regularization for ischemic stroke segmentation (Bachelors of Technology Thesis, patent anticipated)</li>
+          <li>End-to-end multimodal stroke prognostication framework integrating CT, CTA, DWI/ADC, and FLAIR imaging</li>
+          <li>Uncertainty-aware X-ray report generation using Bayesian region detection with Monte Carlo Dropout</li>
+        </ul>
+        <h3>Reinforcement Learning &amp; Drug Discovery</h3>
+        <ul>
+          <li>Offline RL for drug repurposing -modeling Markov decision processes over EHR data with latent state representations (UCSF, ongoing)</li>
+          <li>Non-rewardable RL framework for recursive language models -implicit rewards via <em>Epiplexity</em> (epistemic complexity)</li>
+        </ul>
+        <h3>Computational Biology</h3>
+        <ul>
+          <li>Mechanistic deep learning for neurodegeneration using PINNs, neural ODE/SDE, and multi-agent biological game formulations</li>
+          <li>Protein–DNA affinity interface analysis pipeline (Snakemake + Docker, IIT Jodhpur)</li>
+          <li>Post-COVID immune signature analysis via scRNA-seq (Seurat, SCTransform)</li>
+        </ul>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== EXPERIENCE ========== -->
+    <section class="section" id="experience">
+      <h2>Research Appointments</h2>
+      <ul class="exp-list">
+        <li>
+          <div class="exp-head">
+            <span class="exp-org">University of California San Francisco (UCSF)</span>
+            <span class="exp-date">Apr 2026 – Present</span>
+          </div>
+          <div class="exp-role">Visiting Researcher (Collaboration)</div>
+          <div class="exp-advisor">Advisor: <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">Dr. Vivek Rudrapatna</a> | Department of Medicine</div>
+          <div class="exp-desc">Offline RL and causal inference for drug repurposing using EHR data. Building emulation frameworks to evaluate drug-repurposing candidates using LINCS L1000.</div>
+        </li>
+        <li>
+          <div class="exp-head">
+            <span class="exp-org">Indian Institute of Technology Bombay (IITB)</span>
+            <span class="exp-date">Aug 2025 – Present</span>
+          </div>
+          <div class="exp-role">Visiting Researcher (Internship) &amp; Exchange Semester</div>
+          <div class="exp-advisor">Advisor: <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">Dr. Kshitij Jadhav</a> | Koita Centre for Digital Health, Dept. of CSE</div>
+          <div class="exp-desc">Designed the Size Penalty Loss for stroke segmentation, built multimodal imaging pipelines, worked on uncertainty-aware medical reasoning and mechanistic deep learning for neurodegeneration. Coursework in Computer Vision and Biophysics.</div>
+        </li>
+        <li>
+          <div class="exp-head">
+            <span class="exp-org">Indian Institute of Technology Jodhpur (IITJ)</span>
+            <span class="exp-date">May 2025 – Jun 2025</span>
+          </div>
+          <div class="exp-role">Visiting Researcher (Internship)</div>
+          <div class="exp-advisor">Advisor: <a href="https://www.iitj.ac.in/People/Profile/dcba7c86-0698-466e-b17a-9504b80c2dd7" target="_blank">Dr. Sucharita Dey</a> | Biosciences &amp; Bioengineering Department</div>
+          <div class="exp-desc">Developed an automated protein–DNA interface analysis pipeline in Snakemake. Containerized the workflow with Docker, reducing setup time by 90%+.</div>
+        </li>
       </ul>
     </section>
 
-    <section>
-      <h2>What You’ll Find Here</h2>
-      <ul>
-        <li>Research notes and working hypotheses.</li>
-        <li>Small, reproducible code experiments.</li>
-        <li>Long-form writing connecting technical details to bigger-picture implications.</li>
+    <hr>
+
+    <!-- ========== EDUCATION ========== -->
+    <section class="section" id="education">
+      <h2>Education</h2>
+      <div class="edu-item">
+        <div class="edu-icon">🎓</div>
+        <div class="edu-body">
+          <div class="edu-name">Institute of Advanced Research</div>
+          <div class="edu-deg">Bachelor of Technology in Biotechnology</div>
+          <div class="edu-meta">Jul 2022 – Jun 2026 (anticipated) · CGPA: 8.2/10.0 · Top 10% of class</div>
+        </div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-icon">🎓</div>
+        <div class="edu-body">
+          <div class="edu-name">Indian Institute of Technology Bombay</div>
+          <div class="edu-deg">Semester Exchange Researcher, Koita Centre for Digital Health, CSE</div>
+          <div class="edu-meta">Jan 2026 – Jun 2026 · Coursework: Computer Vision (medical imaging) and Biophysics · Advisor: <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">Dr. Kshitij Jadhav</a></div>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== RESEARCH PROJECTS ========== -->
+    <section class="section" id="research">
+      <h2>Research Projects</h2>
+
+      <!-- Size Penalty Loss -Thesis -->
+      <div class="pub-item">
+        <div class="pub-thumb"><img src="assets/img/thesis_thumb.png" alt="Size Penalty Loss"></div>
+        <div class="pub-body">
+          <div class="pub-abbr"><span>Undergraduate Thesis</span></div>
+          <div class="pub-title">Size Penalty Loss: "What Dice Misses" -Size-Stratified Volume Regularization for Ischemic Stroke Lesion Prognostication</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Supervised by Dr. Kshitij Jadhav (IIT Bombay) · May 2026 · Patent anticipated</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Small ischemic stroke lesions are difficult targets for deep segmentation models because the positive class can occupy a tiny fraction of the image volume, and voxel-overlap objectives can remain numerically acceptable while clinically important small lesions are missed. This thesis introduces Size Penalty Loss, a continuous size-stratified auxiliary loss for medical image segmentation. The proposed term penalizes relative error between the predicted soft lesion volume and the ground-truth volume, with an exponential weight that gives stronger optimization pressure to smaller lesions. Evaluated with a 3D Attention U-Net using ADC, DWI, and an ADC-DWI mismatch channel on two ischemic stroke MRI datasets. Size Penalty improves missed-lesion count, detection, RVE, RQ, PQ, and ASSD -with the clearest gain in sub-milliliter lesions.</div>
+          <div class="pub-links">
+            <a href="assets/docs/Thesis.pdf" class="pub-btn" target="_blank">Thesis PDF</a>
+            <a href="assets/docs/presentation.pdf" class="pub-btn" target="_blank">Slides</a>
+            <a href="https://mhtjsh.github.io/Size-Penalty-Loss-Function/" class="pub-btn" target="_blank">Project Page</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drug Repurposing -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>Ongoing</span></div>
+          <div class="pub-title">Drug Repurposing and EHR Environment Emulation via Offline Reinforcement Learning</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Advisor: Dr. Vivek Rudrapatna · UCSF Department of Medicine · Apr 2026 – Present</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Modeling Markov decision processes over EHR data with latent state representations to address sparsity, including Q-value gradient methods. Building an offline RL emulation framework to evaluate drug-repurposing candidates using public resources including LINCS L1000. The goal is to identify new drug targets from observational clinical data without running new trials.</div>
+        </div>
+      </div>
+
+      <!-- Stroke Prognostication -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>Ongoing · Patent</span></div>
+          <div class="pub-title">Acute Ischemic Stroke Prognostication -End-to-End Multimodal Framework</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Advisor: Dr. Kshitij Jadhav · IIT Bombay KCDH · Jan 2025 – Present</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Designed a multimodal medical imaging model using CT, CTA, DWI/ADC, and FLAIR for stroke lesion segmentation and outcome prediction, integrating volumetric features, vascular topology, and clinical variables in a U-Net architecture. Building an end-to-end framework combining 3D segmentation, vessel-level occlusion modeling, and state-space learning to estimate clot burden and predict 90-day outcomes (mRS) within 24h of admission.</div>
+        </div>
+      </div>
+
+      <!-- Uncertainty-Aware -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>IIT Bombay</span></div>
+          <div class="pub-title">Uncertainty-Aware Medical Reasoning in Language Models</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Advisor: Dr. Kshitij Jadhav · IIT Bombay KCDH · Aug – Dec 2025</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Developed a Bayesian region-detection model combining Monte Carlo Dropout for epistemic uncertainty with direct prediction of aleatoric variance, enabling robust, uncertainty-aware X-ray report generation. Implemented a Gaussian NLL objective that predicts bounding-box coordinates together with their inherent σ, allowing the system to flag spatially ambiguous regions. Built an uncertainty-aware gating mechanism that suppresses auto-generated sentences for low-confidence regions and prioritizes radiologist review.</div>
+        </div>
+      </div>
+
+      <!-- Neurodegeneration -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>IIT Bombay</span></div>
+          <div class="pub-title">Mechanistic Deep Learning for Predicting Neurodegenerative Disease Progression</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Advisor: Dr. Kshitij Jadhav · IIT Bombay KCDH · Aug – Dec 2025</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Developed a BLIP-2-inspired architecture interfacing frozen foundation models (Swin-UNETR for 3D MRI, scGPT for omics) with trainable Q-Formers to distill ADNI data into compact latent representations. Explored Amyloid-β and Tau pathologies as a multi-agent biological game, using cross-modal attention to identify mechanistic drivers. Prototyped continuous-time forecasting using neural ODE/SDE with adversarial training via the Gillespie algorithm.</div>
+        </div>
+      </div>
+
+      <!-- Protein-DNA -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>IIT Jodhpur</span></div>
+          <div class="pub-title">Protein–DNA Affinity Interface Analysis Tool</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Advisor: Dr. Sucharita Dey · IIT Jodhpur · May – Jun 2025</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Developed an automated protein–DNA interface analysis pipeline in Snakemake to process multichain PDB files, integrating Python, Fortran, and shell scripts with Naccess, HBPLUS, and FreeSASA for comprehensive aggregation. Containerized with Docker, reducing setup time by 90%+. Submitted a detailed report covering objectives, protocol, and findings.</div>
+          <div class="pub-links" style="margin-top: 10px;">
+            <a href="https://github.com/mhtjsh/ProteinDNAInterfaceAnalysis" class="pub-btn" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COVID -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>Self-supervised</span></div>
+          <div class="pub-title">Immune Signature Analysis in Post-Acute COVID-19 Lung Sequelae</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Jan – Apr 2025</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Abstract</button>
+          <div class="pub-abstract">Engineered a scalable scRNA-seq pipeline in R (Seurat, SCTransform) analyzing post-COVID lung T cells, identifying persistent pro-inflammatory signatures (IL32, CCL5, CD8A, NKG7). Reactome and DAVID pathway analysis revealed sustained T-cell cytotoxicity and IFN-γ signaling. Proposed an ODE model to translate static gene signatures into dynamic hypotheses of post-acute lung damage.</div>
+          <div class="pub-links" style="margin-top: 10px;">
+            <a href="https://github.com/mhtjsh/covid19-scRNAseq-Tcell-analysis" class="pub-btn" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== EXPLORATORY PROJECTS ========== -->
+    <section class="section" id="exploratory">
+      <h2>Exploratory Projects</h2>
+
+      <!-- PINNs -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>Independent</span></div>
+          <div class="pub-title">Physics-Informed Neural Networks (PINNs) for Partial Differential Equations</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Exploratory Project</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Details</button>
+          <div class="pub-abstract">Implemented Physics-Informed Neural Networks to solve the Burgers' equation and electrostatic potential through the Laplace equation. This project explores the integration of physical laws into neural network loss functions for data-driven discovery of partial differential equations.</div>
+          <div class="pub-links" style="margin-top: 10px;">
+            <a href="https://github.com/mhtjsh/PINN" class="pub-btn" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PySR -->
+      <div class="pub-item">
+        <div class="pub-body">
+          <div class="pub-abbr"><span>Independent</span></div>
+          <div class="pub-title">Symbolic Regression &amp; Sparse Identification for SIR Epidemic Modeling</div>
+          <div class="pub-authors"><em>Mohit Joshi</em></div>
+          <div class="pub-venue">Exploratory Project</div>
+          <button class="pub-abstract-toggle" onclick="toggleAbstract(this)"><span class="toggle-arrow">&#9656;</span> Details</button>
+          <div class="pub-abstract">Conducted a comparative analysis between PySR (Symbolic Regression) and SINDy (Sparse Identification of Nonlinear Dynamics) to model epidemic spread using the SIR mathematical framework. This work examines the interpretability and predictive power of equation discovery methods.</div>
+          <div class="pub-links" style="margin-top: 10px;">
+            <a href="https://github.com/mhtjsh/PySR_and_SINDY_Comparision" class="pub-btn" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== IDEAS & DIRECTIONS ========== -->
+    <section class="section" id="ideas">
+      <h2><a href="#">Ideas &amp; Future Directions</a></h2>
+      <ul class="post-list">
+        <li>
+          <div class="post-meta">Primary research direction · In development</div>
+          <div class="post-title">Domain-Agnostic Implicit Rewards in Generative Models Decouple Reasoning Quality from Scale</div>
+          <div class="post-desc">
+            I'm building a framework for systematic guardrails in <a href="https://arxiv.org/abs/2512.24601" target="_blank" style="color: inherit; text-decoration: underline; text-decoration-style: dotted;">Recursive Language Models (RLMs)</a>
+            through non-rewardable reinforcement learning. The central claim is that these guardrails can be
+            controlled through implicit rewards rather than hard-coded constraints -and that
+            we can measure them using a new quantity I call <em><a href="https://arxiv.org/abs/2601.03220" target="_blank" style="color: inherit; text-decoration: underline; text-decoration-style: dotted;">Epiplexity</a></em> (epistemic complexity).
+          </div>
+          <div class="post-desc" style="margin-top:8px;">
+            This work challenges the fundamental learning theory for Language Models. Domain fluency in both humans
+            and machines has always been mistaken for intelligence. What we show is that real adaptive capacity is not
+            about how much a system knows, but about how it can differentiate between what it knows and what it doesn't,
+            and crucially, whether it can recognize, without external feedback, when that navigation is 'epistemically productive'.
+          </div>
+          <div class="post-desc" style="margin-top:8px;">
+            We put forward universal 'implicit rewards' governing the internal reasoning in language models that emerge
+            regardless of domain, size, or training -showing that the architecture of how a system monitors its own
+            reasoning, not the scale of its knowledge, is what separates domain-agnostic adaptive intelligence from narrow expertise.
+          </div>
+        </li>
+        <li>
+          <div class="post-meta">Ongoing with <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">Dr. Vivek Rudrapatna</a> · UCSF</div>
+          <div class="post-title">Combining EHR Drug Trial Emulation and Drug Repurposing</div>
+          <div class="post-desc">
+            Applying offline RL to sparse, noisy electronic health record data to find new drug targets.
+            Medical data is high-stakes -the reward signal is delayed, sparse, and confounded by unmeasured
+            variables. We're modeling Markov decision processes over EHR data with latent state representations,
+            and building emulation frameworks using LINCS L1000 to evaluate drug-repurposing candidates
+            from observational data without running new clinical trials.
+          </div>
+        </li>
+        <li>
+          <div class="post-meta">The thread connecting everything</div>
+          <div class="post-title">Extending RL to Domains Where Rewards Don't Exist</div>
+          <div class="post-desc">
+            From penalizing what Dice misses in stroke segmentation, to discovering implicit rewards in
+            language model reasoning chains, to emulating drug environments from health records -the
+            common thread across my work is extending reinforcement learning into spaces where the reward
+            signal isn't given and needs to be <em>found</em>. The most interesting problems in AI right now
+            live at exactly this boundary: where explicit supervision ends and implicit structure begins.
+          </div>
+        </li>
       </ul>
     </section>
 
-    <section>
-      <h2>Links</h2>
-      <ul>
-        <li><a href="https://github.com/mhtjsh">GitHub Profile</a></li>
+    <hr>
+
+    <!-- ========== NEWS ========== -->
+    <section class="section" id="news">
+      <h2>News</h2>
+      <table class="news-table">
+        <tr><td class="date">May 2026</td><td class="desc">Undergraduate thesis defended -<strong>"What Dice Misses": Size Penalty Loss</strong></td></tr>
+        <tr><td class="date">Apr 2026</td><td class="desc">Began visiting research at <strong>UCSF</strong>, USA with <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">Dr. Vivek Rudrapatna</a></td></tr>
+        <tr><td class="date">Jan 2026</td><td class="desc">Exchange semester at <strong>IIT Bombay</strong>, Koita Centre for Digital Health</td></tr>
+        <tr><td class="date">Aug 2025</td><td class="desc">Started research at <strong>IIT Bombay</strong> with <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">Dr. Kshitij Jadhav</a></td></tr>
+        <tr><td class="date">May 2025</td><td class="desc">Research internship at <strong>IIT Jodhpur</strong> with <a href="https://www.iitj.ac.in/People/Profile/dcba7c86-0698-466e-b17a-9504b80c2dd7" target="_blank">Dr. Sucharita Dey</a></td></tr>
+        <tr><td class="date">Feb 2025</td><td class="desc"><strong>Best Poster Presenter</strong> -CME Immunology, Institute of Advanced Research</td></tr>
+        <tr><td class="date">Mar 2024</td><td class="desc"><strong>Best Poster Presenter</strong> -Annual Research and Innovation Conclave (ARIC)</td></tr>
+        <tr><td class="date">2024</td><td class="desc">3rd place -<strong>Gujarat Government Healthcare Hackathon</strong></td></tr>
+        <!-- Add more news here -->
+      </table>
+    </section>
+
+    <hr>
+
+    <!-- ========== AWARDS ========== -->
+    <section class="section" id="awards">
+      <h2>Awards &amp; Honors</h2>
+      <ul class="awards-list">
+        <li><strong>IITB Research Internship Award 2025–26</strong> -selected for exchange semester at IIT Bombay from 3,000 candidates</li>
+        <li><strong>Best Poster Presenter</strong> -Enhancer Hijacking in Medulloblastoma, CME Immunology, IAR (Feb 2025)</li>
+        <li><strong>Best Poster Presenter</strong> -Dairy Wastewater Treatment Research, ARIC, IAR (Mar 2024)</li>
+        <li><strong>3rd Place</strong> -Solutions for Healthcare Challenges, Gujarat Government Statewide Hackathon (2024)</li>
+        <li><strong>Project Funding</strong> -secured INR 100,000 for data-driven innovation projects (Bubble Labs &amp; Curiosy, 2022–2024)</li>
       </ul>
     </section>
 
-    <p class="footer">
-      This page is intentionally lightweight so ideas stay central. More posts and project links coming soon.
-    </p>
-  </main>
+    <hr>
+
+    <!-- ========== CONTACT ========== -->
+    <section class="section" id="contact">
+      <h2>Get in Touch</h2>
+      <p style="font-size:15px;color:var(--text-light);margin-bottom:1.2rem;">
+        Interested in collaborating, have research questions, or just want to chat? Drop me a message.
+      </p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <a href="mailto:mpjoshi2425@gmail.com" class="pub-btn" style="font-size:14px;padding:6px 16px;"><i class="fa-solid fa-envelope"></i> &nbsp;mpjoshi2425@gmail.com</a>
+        <a href="https://github.com/mhtjsh" class="pub-btn" style="font-size:14px;padding:6px 16px;" target="_blank"><i class="fa-brands fa-github"></i> &nbsp;GitHub</a>
+        <a href="assets/docs/Resume.pdf" class="pub-btn" style="font-size:14px;padding:6px 16px;" target="_blank"><i class="fa-solid fa-file-pdf"></i> &nbsp;CV / Resume</a>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <div class="container">&copy; 2026 Mohit Joshi. All rights reserved.</div>
+  </footer>
+
+  <script src="assets/js/main.js?v=2"></script>
+  <script>
+    function toggleAbstract(btn) {
+      const abstract = btn.nextElementSibling;
+      const isOpen = abstract.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+    }
+  </script>
 </body>
 </html>
