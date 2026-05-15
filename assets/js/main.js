@@ -36,17 +36,6 @@ if (menuBtn && navMenu) {
 }
 
 // ==========================================
-// Progress bar
-// ==========================================
-const bar = document.getElementById('progress');
-if (bar) {
-  window.addEventListener('scroll', () => {
-    const h = document.documentElement.scrollHeight - innerHeight;
-    bar.style.width = h > 0 ? (scrollY / h * 100) + '%' : '0%';
-  }, { passive: true });
-}
-
-// ==========================================
 // TOC sidebar: active section tracking
 // ==========================================
 const tocLinks = document.querySelectorAll('.toc-list a');
@@ -57,12 +46,39 @@ tocLinks.forEach((link, i) => {
   if (id && id.startsWith('#')) sectionIds.push({ id: id.slice(1), link, dot: tocDots[i] });
 });
 
+function calculateTOCHeights() {
+  sectionIds.forEach(({ id, dot }, i) => {
+    const el = document.getElementById(id);
+    if (el && dot) {
+       const nextEl = sectionIds[i+1] ? document.getElementById(sectionIds[i+1].id) : null;
+       const sectionHeight = nextEl ? (nextEl.offsetTop - el.offsetTop) : (document.documentElement.scrollHeight - el.offsetTop);
+       dot.style.flex = Math.max(sectionHeight, 50); // proportional to section height
+    }
+  });
+}
+window.addEventListener('resize', calculateTOCHeights);
+window.addEventListener('load', calculateTOCHeights);
+setTimeout(calculateTOCHeights, 500);
+
 function updateTOC() {
   let current = '';
   sectionIds.forEach(({ id }) => {
     const el = document.getElementById(id);
     if (el && window.scrollY >= el.offsetTop - 140) current = id;
   });
+
+  if (current !== window.currentSection && window.currentSection !== undefined) {
+    const sidebar = document.getElementById('tocSidebar');
+    if (sidebar) {
+      sidebar.classList.add('peek');
+      clearTimeout(window.peekTimeout);
+      window.peekTimeout = setTimeout(() => {
+        sidebar.classList.remove('peek');
+      }, 1500);
+    }
+  }
+  window.currentSection = current;
+
   sectionIds.forEach(({ id, link, dot }) => {
     const active = id === current;
     link.classList.toggle('active', active);

@@ -4,7 +4,7 @@
 
 /* ---------- Variables: Light ---------- */
 :root {
-  --bg: #faefe3;
+  --bg: #ffffff;
   --text: #2b2b2b;
   --text-light: #6b6b6b;
   --text-muted: #9a9a9a;
@@ -15,13 +15,14 @@
   --divider: rgba(0,0,0,0.08);
   --card-bg: #ffffff;
   --card-border: rgba(0,0,0,0.07);
-  --sidebar-bg: rgba(252,252,252,0.95);
+  --sidebar-bg: rgba(255,255,255,0.65);
   --tag-bg: rgba(139,34,50,0.07);
   --tag-text: #8b2232;
   --tag-blue-bg: rgba(45,74,122,0.07);
   --tag-blue-text: #2d4a7a;
   --preview-bg: #fff;
   --preview-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
   --font-serif: 'Merriweather', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -40,13 +41,14 @@ html[data-theme="dark"] {
   --divider: rgba(255,255,255,0.08);
   --card-bg: #181818;
   --card-border: rgba(255,255,255,0.05);
-  --sidebar-bg: rgba(17,17,17,0.96);
+  --sidebar-bg: rgba(20,20,20,0.65);
   --tag-bg: rgba(212,123,123,0.12);
   --tag-text: #d47b7b;
   --tag-blue-bg: rgba(123,181,212,0.12);
   --tag-blue-text: #7bb5d4;
   --preview-bg: #1e1e1e;
   --preview-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
 }
 
@@ -80,13 +82,7 @@ img { max-width: 100% }
 hr { border: 0; border-top: 1px solid var(--divider); margin: 1.5rem 0 }
 p, h1, h2, h3, h4, li, span, strong, td, th, em, div { color: var(--text) }
 
-/* ---------- Progress Bar ---------- */
-#progress {
-  position: fixed;
-  left: 0; top: 56px; z-index: 10;
-  width: 0%; height: 2px;
-  background: var(--accent);
-}
+
 
 /* ---------- Top Navbar ---------- */
 .navbar {
@@ -179,8 +175,9 @@ p, h1, h2, h3, h4, li, span, strong, td, th, em, div { color: var(--text) }
   transition: width .3s ease;
   overflow: hidden;
 }
-.toc-sidebar:hover {
-  width: 260px;
+.toc-sidebar:hover,
+.toc-sidebar.peek {
+  width: 210px;
 }
 /* The thin accent line on the edge */
 .toc-rail {
@@ -191,48 +188,59 @@ p, h1, h2, h3, h4, li, span, strong, td, th, em, div { color: var(--text) }
   opacity: .35;
   transition: opacity .3s;
 }
-.toc-sidebar:hover .toc-rail { opacity: 0 }
+.toc-sidebar:hover .toc-rail,
+.toc-sidebar.peek .toc-rail { opacity: 0 }
 
-/* Dot indicators visible by default */
+/* Bar indicator visible by default */
 .toc-dots {
   position: absolute;
   left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+  width: 4px;
+  background: var(--divider);
+  border-radius: 0;
+  overflow: hidden;
   transition: opacity .25s;
 }
-.toc-sidebar:hover .toc-dots { opacity: 0 }
+.toc-sidebar:hover .toc-dots,
+.toc-sidebar.peek .toc-dots { opacity: 0 }
 .toc-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  transition: background .2s, transform .2s;
+  width: 4px; flex: 1;
+  background: transparent;
+  transition: background .2s;
 }
 .toc-dot.active {
   background: var(--accent);
-  transform: scale(1.5);
 }
 
 /* Full text TOC revealed on hover */
 .toc-panel {
-  width: 260px;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  width: 210px;
+  height: auto;
+  max-height: 80vh;
   background: var(--sidebar-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-right: 1px solid var(--divider);
-  padding: 32px 20px 32px 20px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--divider);
+  border-left: none;
+  border-radius: 0 16px 16px 0;
+  box-shadow: var(--glass-shadow);
+  padding: 24px 16px;
   opacity: 0;
-  transform: translateX(-20px);
+  transform: translateY(-50%) translateX(-20px);
   transition: opacity .3s ease, transform .3s ease;
   overflow-y: auto;
 }
-.toc-sidebar:hover .toc-panel {
+.toc-sidebar:hover .toc-panel,
+.toc-sidebar.peek .toc-panel {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(-50%) translateX(0);
 }
 .toc-title {
   font-size: 11px;
@@ -704,6 +712,18 @@ html[data-theme="dark"] .pub-abstract { background: rgba(255,255,255,0.03) }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .04em;
+}
+
+/* ---------- Signature ---------- */
+.signature-img {
+  max-width: 150px;
+  display: inline-block;
+  opacity: 0.85;
+  transition: filter .6s;
+}
+
+html[data-theme="dark"] .signature-img {
+  filter: invert(1) brightness(0.9);
 }
 
 /* ---------- Footer ---------- */
