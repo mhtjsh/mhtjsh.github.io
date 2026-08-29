@@ -1,4 +1,31 @@
 // ==========================================
+// Site-wide LaTeX math support
+// Use $...$ or \(...\) inline and $$...$$ or \[...\] for display math.
+// ==========================================
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  chtml: {
+    scale: 1,
+    matchFontHeight: true
+  }
+};
+
+if (!document.querySelector('script[data-mathjax]')) {
+  const mathJaxScript = document.createElement('script');
+  mathJaxScript.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js';
+  mathJaxScript.async = true;
+  mathJaxScript.dataset.mathjax = 'true';
+  document.head.appendChild(mathJaxScript);
+}
+
+// ==========================================
 // Theme toggle
 // ==========================================
 const html = document.documentElement;
@@ -36,29 +63,156 @@ if (menuBtn && navMenu) {
 }
 
 // ==========================================
-// TOC sidebar: active section tracking
+// Floating section navigator and reading progress
 // ==========================================
-const tocLinks = document.querySelectorAll('.toc-list a');
-const tocDots = document.querySelectorAll('.toc-dot');
+function createArticleNavigator() {
+  if (document.getElementById('tocSidebar')) return;
+
+  const article = document.querySelector('.article-page article');
+  if (!article) return;
+
+  const headings = Array.from(article.querySelectorAll('h2'));
+  if (!headings.length) return;
+
+  const usedIds = new Set(Array.from(document.querySelectorAll('[id]')).map(element => element.id));
+  headings.forEach((heading, index) => {
+    if (heading.id) return;
+
+    const baseId = heading.textContent
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || `section-${index + 1}`;
+    let id = baseId;
+    let suffix = 2;
+    while (usedIds.has(id)) id = `${baseId}-${suffix++}`;
+    heading.id = id;
+    usedIds.add(id);
+  });
+
+  const sidebar = document.createElement('nav');
+  sidebar.className = 'toc-sidebar blog-toc';
+  sidebar.id = 'tocSidebar';
+  sidebar.setAttribute('aria-label', 'Article sections');
+
+  const trigger = document.createElement('button');
+  trigger.className = 'toc-trigger';
+  trigger.id = 'tocTrigger';
+  trigger.type = 'button';
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-controls', 'tocPanel');
+  trigger.setAttribute('aria-label', 'Open article index');
+  trigger.innerHTML = '<i class="fa-solid fa-list-ul" aria-hidden="true"></i><span>Article</span>';
+
+  const progress = document.createElement('div');
+  progress.className = 'toc-progress';
+  progress.setAttribute('aria-hidden', 'true');
+  progress.innerHTML = '<span id="tocProgress"></span>';
+
+  const panel = document.createElement('div');
+  panel.className = 'toc-panel';
+  panel.id = 'tocPanel';
+  panel.innerHTML = `
+    <div class="toc-panel-head">
+      <div>
+        <div class="toc-kicker">Navigate</div>
+        <div class="toc-title">In this article</div>
+      </div>
+      <button class="toc-close" id="tocClose" type="button" aria-label="Close article index"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
+  `;
+
+  const list = document.createElement('ol');
+  list.className = 'toc-list';
+  headings.forEach((heading, index) => {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+
+    const number = document.createElement('span');
+    number.textContent = String(index + 1).padStart(2, '0');
+    const label = document.createTextNode(heading.textContent.replace(/^\d+\.\s*/, ''));
+    link.append(number, label);
+    item.appendChild(link);
+    list.appendChild(item);
+  });
+
+  panel.appendChild(list);
+  sidebar.append(trigger, progress, panel);
+  document.body.appendChild(sidebar);
+}
+
+createArticleNavigator();
+
+const tocSidebar = document.getElementById('tocSidebar');
+const tocTrigger = document.getElementById('tocTrigger');
+const tocPanel = document.getElementById('tocPanel');
+const tocClose = document.getElementById('tocClose');
+const tocProgress = document.getElementById('tocProgress');
+const tocLinks = document.querySelectorAll('.toc-list a[href^="#"]');
 const sectionIds = [];
-tocLinks.forEach((link, i) => {
+let tocCloseTimer = null;
+let tocPinnedOpen = false;
+tocLinks.forEach(link => {
   const id = link.getAttribute('href');
-  if (id && id.startsWith('#')) sectionIds.push({ id: id.slice(1), link, dot: tocDots[i] });
+  if (id) sectionIds.push({ id: id.slice(1), link });
 });
 
-function calculateTOCHeights() {
-  sectionIds.forEach(({ id, dot }, i) => {
-    const el = document.getElementById(id);
-    if (el && dot) {
-       const nextEl = sectionIds[i+1] ? document.getElementById(sectionIds[i+1].id) : null;
-       const sectionHeight = nextEl ? (nextEl.offsetTop - el.offsetTop) : (document.documentElement.scrollHeight - el.offsetTop);
-       dot.style.flex = Math.max(sectionHeight, 50); // proportional to section height
-    }
+function setTOCOpen(isOpen) {
+  if (!tocSidebar || !tocTrigger) return;
+  const indexName = tocSidebar.classList.contains('blog-toc') ? 'article index' : 'page index';
+  tocSidebar.classList.toggle('is-open', isOpen);
+  tocTrigger.setAttribute('aria-expanded', String(isOpen));
+  tocTrigger.setAttribute('aria-label', `${isOpen ? 'Close' : 'Open'} ${indexName}`);
+}
+
+function cancelTOCClose() {
+  if (tocCloseTimer) window.clearTimeout(tocCloseTimer);
+  tocCloseTimer = null;
+}
+
+function openTOCOnHover() {
+  cancelTOCClose();
+  setTOCOpen(true);
+}
+
+function scheduleTOCClose() {
+  cancelTOCClose();
+  if (tocPinnedOpen) return;
+  tocCloseTimer = window.setTimeout(() => setTOCOpen(false), 350);
+}
+
+if (tocTrigger) {
+  tocTrigger.addEventListener('click', () => {
+    cancelTOCClose();
+    tocPinnedOpen = !tocPinnedOpen;
+    setTOCOpen(tocPinnedOpen);
   });
 }
-window.addEventListener('resize', calculateTOCHeights);
-window.addEventListener('load', calculateTOCHeights);
-setTimeout(calculateTOCHeights, 500);
+if (tocSidebar && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  tocSidebar.addEventListener('mouseenter', openTOCOnHover);
+  tocSidebar.addEventListener('mouseleave', scheduleTOCClose);
+  if (tocPanel) {
+    tocPanel.addEventListener('mouseenter', openTOCOnHover);
+    tocPanel.addEventListener('mouseleave', scheduleTOCClose);
+  }
+}
+if (tocClose) {
+  tocClose.addEventListener('click', () => {
+    tocPinnedOpen = false;
+    setTOCOpen(false);
+  });
+}
+tocLinks.forEach(link => link.addEventListener('click', () => {
+  tocPinnedOpen = false;
+  setTOCOpen(false);
+}));
+
+document.addEventListener('click', event => {
+  if (tocSidebar && tocSidebar.classList.contains('is-open') && !tocSidebar.contains(event.target)) {
+    tocPinnedOpen = false;
+    setTOCOpen(false);
+  }
+});
 
 function updateTOC() {
   let current = '';
@@ -67,25 +221,21 @@ function updateTOC() {
     if (el && window.scrollY >= el.offsetTop - 140) current = id;
   });
 
-  if (current !== window.currentSection && window.currentSection !== undefined) {
-    const sidebar = document.getElementById('tocSidebar');
-    if (sidebar) {
-      sidebar.classList.add('peek');
-      clearTimeout(window.peekTimeout);
-      window.peekTimeout = setTimeout(() => {
-        sidebar.classList.remove('peek');
-      }, 1500);
-    }
-  }
-  window.currentSection = current;
-
-  sectionIds.forEach(({ id, link, dot }) => {
+  sectionIds.forEach(({ id, link }) => {
     const active = id === current;
     link.classList.toggle('active', active);
-    if (dot) dot.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
   });
+
+  if (tocProgress) {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const percent = scrollable > 0 ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100)) : 0;
+    tocProgress.style.height = `${percent}%`;
+  }
 }
 window.addEventListener('scroll', updateTOC, { passive: true });
+window.addEventListener('resize', updateTOC);
 updateTOC();
 
 // ==========================================
@@ -101,6 +251,21 @@ function toggleAbstract(btn) {
 // Link Preview Tooltips
 // ==========================================
 const previewData = {
+  'https://diffusion.csail.mit.edu/2026/index.html': {
+    title: 'MIT 6.S184: Flow Matching and Diffusion Models',
+    desc: 'A theory-first course on SDEs, flow matching, score matching, guidance, latent diffusion, and hands-on model construction.',
+    type: 'Course'
+  },
+  'https://youtube.com/playlist?list=PLQZQ7N26C6ba2BDFVULmmBYC80cX6pNjZ&si=D9ri-o34Vft-JMTT': {
+    title: 'Imitation Learning: A Series of Deep Dives',
+    desc: 'A ten-part series by Prof. Sanjiban Choudhury on demonstrations, feedback, interventions, and interactive imitation learning.',
+    type: 'Course'
+  },
+  'https://www.cs.cornell.edu/people/sanjiban-choudhury-0': {
+    title: 'Prof. Sanjiban Choudhury',
+    desc: 'Assistant Professor of Computer Science at Cornell University, working on imitation learning, reinforcement learning, and interactive AI agents.',
+    type: 'Instructor'
+  },
   'https://medicine.ucsf.edu/people/vivek-rudrapatna': {
     title: 'Dr. Vivek Rudrapatna',
     desc: 'Assistant Professor, Department of Medicine, UCSF. Research focuses on clinical informatics, EHR-based research methods, and drug repurposing using observational data.',
@@ -424,6 +589,10 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'Escape' && cmdOverlay && cmdOverlay.classList.contains('active')) {
     closeCmd();
+  }
+  if (e.key === 'Escape') {
+    tocPinnedOpen = false;
+    setTOCOpen(false);
   }
 });
 

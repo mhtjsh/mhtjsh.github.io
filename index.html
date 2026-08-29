@@ -5,33 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mohit Joshi</title>
   <meta name="description" content="Mohit Joshi -researcher working on reinforcement learning for medical AI, novel loss function design, drug repurposing, and consciousness in language models. B.Tech Biotechnology, research at IIT Bombay and UCSF.">
-  <meta name="keywords" content="Mohit Joshi, MoJo, reinforcement learning, medical AI, size penalty loss, IIT Bombay, UCSF, machine learning, drug repurposing, consciousness language models, computer vision">
   <meta name="author" content="Mohit Joshi">
   <meta property="og:title" content="Mohit Joshi">
   <meta property="og:description" content="Researcher working on reinforcement learning, medical AI, loss function design, and consciousness in language models.">
   <meta property="og:type" content="profile">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="icon" href="assets/img/perfect_sign.jpg" type="image/jpeg">
 </head>
-<body>
+<body class="research-profile-page">
 
   <!-- ===== Top Navbar ===== -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand">Home</a>
-      <div style="display:flex;align-items:center;gap:0;">
+      <a href="index.html" class="nav-brand" aria-label="Mohit Joshi — home"><span class="brand-mark">Home</span></a>
+      <div class="nav-group">
         <ul class="nav-menu" id="navMenu">
           <li><a href="#about" class="active">About</a></li>
+          <li><a href="#experience">Experience</a></li>
           <li><a href="#research">Research</a></li>
-          <li><a href="#ideas">Ideas</a></li>
-          <li><a href="#news">News</a></li>
+          <li><a href="technical.html">Technical Writeups</a></li>
+          <li><a href="#teaching">Teaching</a></li>
+          <li><a href="#courses">Courses</a></li>
         </ul>
         <div class="nav-right">
-          <button id="cmdBtn" aria-label="Search" style="background:var(--divider); border:none; padding:4px 10px; border-radius:4px; font-size:12px; color:var(--text); font-weight:500; cursor:pointer; margin-right:8px; display:flex; align-items:center; gap:6px; transition:opacity .2s;">
+          <button id="cmdBtn" class="command-trigger" aria-label="Search">
             <i class="fa-solid fa-magnifying-glass"></i> <span style="opacity:0.7">Ctrl K</span>
           </button>
           <button id="light-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
@@ -41,33 +42,33 @@
     </div>
   </nav>
 
-  <!-- ===== LessWrong-style TOC Sidebar ===== -->
-  <nav class="toc-sidebar" id="tocSidebar">
-    <div class="toc-rail"></div>
-    <div class="toc-dots">
-      <div class="toc-dot active"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-      <div class="toc-dot"></div>
-    </div>
-    <div class="toc-panel">
-      <div class="toc-title">Contents</div>
-      <ul class="toc-list">
-        <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#education">Education</a></li>
-        <li><a href="#research">Research Projects</a></li>
-        <li><a href="#exploratory">Exploratory Projects</a></li>
-        <li><a href="#ideas">Ideas &amp; Directions</a></li>
-        <li><a href="#news">News</a></li>
-        <li><a href="#awards">Awards</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
+  <!-- ===== Floating section navigator ===== -->
+  <nav class="toc-sidebar" id="tocSidebar" aria-label="Page sections">
+    <button class="toc-trigger" id="tocTrigger" type="button" aria-expanded="false" aria-controls="tocPanel" aria-label="Open page index">
+      <i class="fa-solid fa-list-ul" aria-hidden="true"></i>
+      <span>Index</span>
+    </button>
+    <div class="toc-progress" aria-hidden="true"><span id="tocProgress"></span></div>
+    <div class="toc-panel" id="tocPanel">
+      <div class="toc-panel-head">
+        <div>
+          <div class="toc-kicker">Explore</div>
+          <div class="toc-title">On this page</div>
+        </div>
+        <button class="toc-close" id="tocClose" type="button" aria-label="Close page index"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#about"><span>01</span>About</a></li>
+        <li><a href="#experience"><span>02</span>Experience</a></li>
+        <li><a href="#education"><span>03</span>Education</a></li>
+        <li><a href="#teaching"><span>04</span>Teaching</a></li>
+        <li><a href="#courses"><span>05</span>Courses</a></li>
+        <li><a href="#research"><span>06</span>Research Projects</a></li>
+        <li><a href="#exploratory"><span>07</span>Exploratory Projects</a></li>
+        <li><a href="#news"><span>08</span>News</a></li>
+        <li><a href="#awards"><span>09</span>Awards</a></li>
+        <li><a href="#contact"><span>10</span>Contact</a></li>
+      </ol>
     </div>
   </nav>
 
@@ -88,8 +89,9 @@
           </div>
         </div>
         <div class="about-content">
+          <p class="profile-kicker">Research profile</p>
           <h1>Mohit Joshi</h1>
-          <p class="lead">Researcher at <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">IIT Bombay KCDH</a> &amp; <a href="https://it.ucsf.edu/directory/user/391791/mohit-joshi" target="_blank">UCSF Department of Medicine</a></p>
+          <p class="lead">Researcher at <a href="https://www.iairo.ai/" target="_blank">Indian AI Research Organization </a> &amp; <a href="https://it.ucsf.edu/directory/user/391791/mohit-joshi" target="_blank">UCSF Department of Medicine</a></p>
           <p>
             I got into machine learning research through the medical domain: starting with
             <strong>medical reasoning in language models</strong>, then moving into
@@ -107,14 +109,14 @@
             and studying <strong>consciousness in recursive language models</strong>.
           </p>
           <p>
-            My research interests sit at the intersection of <strong>Domain Adaptaion, Mathematics, and Machine Learning</strong>.
+            My research interests sit at the intersection of <strong>Diffusion Models for Text, Domain Adaptation (Robotics), and AI Safety</strong>.
             I'm drawn to problems like <i> implicit rewards (Non-rewardable RL) </i> through
             <strong><a href="https://arxiv.org/abs/2601.03220" target="_blank" style="color: inherit;">Epiplexity</a></strong> &
             <strong> statistical distribution in reasoning</strong> through <a href="https://arxiv.org/abs/2512.24601"
               target="_blank" style="color: inherit;">Recursive Language Model</a>.
           </p>
           <p>
-            I am also interested in exploring other areas, for the sake of "Serendipity" in my Research, - currently I am interested in <strong>Scientific Computing</strong> &
+            I am also interested in exploring other areas, for the sake of "Serendipity" in my Research, currently I am interested in <strong>Scientific Computing</strong> &
             <strong>Mathematical Biology (Dynamical Modelling)</strong>.
           </p>
         </div>
@@ -125,8 +127,16 @@
 
     <!-- ========== EXPERIENCE ========== -->
     <section class="section" id="experience">
-      <h2>Resear</h2>
+      <h2>Experience</h2>
       <ul class="exp-list">
+        <li>
+          <div class="exp-head">
+            <span class="exp-org">Indian AI Research Organisation (IAIRO)</span>
+            <span class="exp-date">Aug 2026 – Present</span>
+          </div>
+          <div class="exp-role">Pre-training Researcher</div>
+          <div class="exp-desc">Research on large-scale model pre-training: exploring training dynamics, data curation, and architectural design of foundation models.</div>
+        </li>
         <li>
           <div class="exp-head">
             <span class="exp-org">University of California San Francisco (UCSF)</span>
@@ -139,7 +149,7 @@
         <li>
           <div class="exp-head">
             <span class="exp-org">Indian Institute of Technology Bombay (IITB)</span>
-            <span class="exp-date">Aug 2025 – Present</span>
+            <span class="exp-date">Aug 2025 – Jun 2026</span>
           </div>
           <div class="exp-role">Visiting Researcher (Internship) &amp; Exchange Semester</div>
           <div class="exp-advisor">Advisor: <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">Dr. Kshitij Jadhav</a> | Koita Centre for Digital Health, Dept. of CS</div>
@@ -179,6 +189,140 @@
           <div class="edu-meta">Jan 2026 – Jun 2026 · Coursework: Computer Vision (medical imaging), Biophysics · Advisor: <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">Dr. Kshitij Jadhav</a></div>
         </div>
       </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== TEACHING ========== -->
+    <section class="section" id="teaching">
+      <div class="section-heading-row">
+        <h2>Teaching</h2>
+        <span class="section-eyebrow">SLM++ Bootcamp · Cohort 1</span>
+      </div>
+      <article class="teaching-card">
+        <div class="teaching-video">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/2ZRB0EY8uKE"
+            title="Modern SLM Upgrades and Mixture of Experts workshop"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="teaching-content">
+          <div class="teaching-meta"><span>Teaching Assistant</span><span>Session 03 · 120 minutes</span></div>
+          <h3>Modern SLM Upgrades &amp; Mixture of Experts</h3>
+          <p>A class taught in the SLM building workshop along with the Language Model upgrades like (MoE, RoPE, GQA, RMSNorm, SwiGLU and the Math behind) and the hands-on assignment.</p>
+          <div class="teaching-resources">
+            <a href="assets/teaching/slm-workshop/modern-slm-upgrades-slides.pdf" target="_blank" rel="noopener">
+              Slides <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            </a>
+            <span aria-hidden="true">|</span>
+            <a href="assets/teaching/slm-workshop/modern-slm-upgrades-lab.ipynb" download>
+              Workbook <i class="fa-solid fa-download" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <hr>
+
+    <!-- ========== COURSES ========== -->
+    <section class="section" id="courses">
+      <div class="section-heading-row">
+        <h2>Courses / MOOCs Taken</h2>
+        <span class="section-eyebrow">Selected independent coursework</span>
+      </div>
+
+      <article class="course-item">
+        <div class="course-meta">MIT 6.S184 · IAP 2026 · 3 units</div>
+        <h3><a href="https://diffusion.csail.mit.edu/2026/index.html" target="_blank" rel="noopener">Introduction to Flow Matching and Diffusion Models 2026</a></h3>
+        <p class="course-subtitle">Generative AI with Stochastic Differential Equations</p>
+
+        <dl class="course-details">
+          <div>
+            <dt>Instruction</dt>
+            <dd>Peter Holderrieth (lectures), Ron Shprints and Ezra Erives (labs)</dd>
+          </div>
+          <div>
+            <dt>Sponsor</dt>
+            <dd>Prof. Tommi Jaakkola, MIT CSAIL</dd>
+          </div>
+          <div>
+            <dt>Format</dt>
+            <dd>Five mathematical lectures and three guided implementation labs</dd>
+          </div>
+        </dl>
+        <p> This Course helped </p>
+        <p class="course-summary">
+          A theory-first and hands-on introduction to modern flow and diffusion models. The course develops
+          generative modeling from ordinary and stochastic differential equations, then connects the mathematics
+          to flow matching, score matching, guidance, latent representations, and neural architectures. The labs
+          culminate in building the core components of a latent diffusion model from scratch.
+        </p>
+
+        <p class="course-topics">
+          <strong>Topics:</strong> ODEs and SDEs, Fokker-Planck and continuity equations, flow matching,
+          denoising score matching, classifier-free guidance, VAEs, U-Nets, Diffusion Transformers,
+          discrete diffusion, and continuous-time Markov chains.
+        </p>
+
+        <div class="course-links">
+          <a href="https://diffusion.csail.mit.edu/2026/index.html" target="_blank" rel="noopener">
+            Course website <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+          </a>
+          <span aria-hidden="true">|</span>
+          <a href="https://diffusion.csail.mit.edu/2026/docs/lecture_notes.pdf" target="_blank" rel="noopener">
+            Lecture notes <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+
+      <article class="course-item">
+        <div class="course-meta">Open lecture series · 10 parts · 2022</div>
+        <h3><a href="https://youtube.com/playlist?list=PLQZQ7N26C6ba2BDFVULmmBYC80cX6pNjZ&amp;si=D9ri-o34Vft-JMTT" target="_blank" rel="noopener">Imitation Learning: A Series of Deep Dives</a></h3>
+        <p class="course-subtitle">A general framework for learning from demonstrations, feedback, and interventions</p>
+
+        <dl class="course-details">
+          <div>
+            <dt>Instructor</dt>
+            <dd>Prof. Sanjiban Choudhury</dd>
+          </div>
+          <div>
+            <dt>Affiliation</dt>
+            <dd>Assistant Professor of Computer Science, Cornell University</dd>
+          </div>
+          <div>
+            <dt>Format</dt>
+            <dd>Ten video lectures progressing from foundations to interactive imitation learning</dd>
+          </div>
+        </dl>
+
+        <p class="course-summary">
+          A focused study of how agents learn policies from expert behavior and how those policies fail when
+          their own actions move them away from the training distribution. The series builds a unified view of
+          demonstrations, corrective feedback, and human interventions, then connects these ideas to interactive
+          learning for agents operating in real environments.
+        </p>
+
+        <p class="course-topics">
+          <strong>Topics:</strong> behavior cloning, covariate shift, feedback-driven learning, expert
+          demonstrations, interventions, interactive imitation learning, no-regret perspectives, and
+          applications in robot decision making.
+        </p>
+
+        <div class="course-links">
+          <a href="https://youtube.com/playlist?list=PLQZQ7N26C6ba2BDFVULmmBYC80cX6pNjZ&amp;si=D9ri-o34Vft-JMTT" target="_blank" rel="noopener">
+            Watch playlist <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+          <span aria-hidden="true">|</span>
+          <a href="https://www.cs.cornell.edu/people/sanjiban-choudhury-0" target="_blank" rel="noopener">
+            Instructor profile <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
     </section>
 
     <hr>
@@ -323,67 +467,12 @@
 
     <hr>
 
-    <!-- ========== IDEAS & DIRECTIONS ========== -->
-    <section class="section" id="ideas">
-      <h2><a href="#">Ideas &amp; Future Directions</a></h2>
-      <ul class="post-list">
-        <li>
-          <div class="post-meta">Primary research direction · In development</div>
-          <div class="post-title">Domain-Agnostic Implicit Rewards in Generative Models Decouple Reasoning Quality from Quantity of Knowledgeable</div>
-          <div class="post-desc">
-            I'm building a framework for systematic guardrails in <a href="https://arxiv.org/abs/2512.24601" target="_blank" style="color: inherit; text-decoration: underline; text-decoration-style: dotted;">Recursive Language Models (RLMs)</a>
-            through non-rewardable reinforcement learning. The central claim is that these guardrails can be
-            controlled through implicit rewards rather than hard-coded constraints -and that
-            we can measure them using a new quantity called as <em><a href="https://arxiv.org/abs/2601.03220" target="_blank" style="color: inherit; text-decoration: underline; text-decoration-style: dotted;">Epiplexity</a></em> (epistemic complexity).
-          </div>
-          <div class="post-desc" style="margin-top:8px;">
-            This work challenges the fundamental learning theory for Language Models. Domain fluency in both humans
-            and machines has always been mistaken for intelligence. What we show is that real adaptive capacity is solely not
-            about how much a system knows, but about 'what' path it is taking in it's reasoning journey and 'how' it can differentiate 
-            between what it knows and what it doesn't, and crucially, whether it can recognize, without external feedback, when 
-            that navigation is 'epistemically productive'.
-          </div>
-          <div class="post-desc" style="margin-top:8px;">
-            The Precise point is, <i>"Right Directional Steps"</i> is equally important over <i>"Sole Intelligence"</i> of the model.
-          </div>
-          <div class="post-desc" style="margin-top:8px;">
-            We are trying to forward universal 'implicit rewards' governing the internal reasoning in language models that emerge
-            regardless of domain, size, or training -showing that the architecture of how a system monitors its own
-            reasoning, not the scale of its knowledge, is what separates domain-agnostic adaptive intelligence from narrow expertise.
-          </div>
-        </li>
-        <li>
-          <div class="post-meta">Ongoing with <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">Dr. Vivek Rudrapatna</a> · UCSF</div>
-          <div class="post-title">Combining EHR Drug Trial Emulation and Drug Repurposing</div>
-          <div class="post-desc">
-            Applying offline RL to sparse, noisy electronic health record data to find new drug targets.
-            Medical data is high-stakes -the reward signal is delayed, sparse, and confounded by unmeasured
-            variables. We're modeling Markov decision processes over EHR data with latent state representations,
-            and building emulation frameworks using LINCS L1000 to evaluate drug-repurposing candidates
-            from observational data without running new clinical trials.
-          </div>
-        </li>
-        <li>
-          <div class="post-meta">The thread connecting everything</div>
-          <div class="post-title">Extending RL to Domains Where Rewards Don't Exist</div>
-          <div class="post-desc">
-            From penalizing what Dice misses in stroke segmentation, to discovering implicit rewards in
-            language model reasoning chains, to emulating drug environments from health records -the
-            common thread across my work is extending reinforcement learning into spaces where the reward
-            signal isn't given and needs to be <em>found</em>. The most interesting problems in AI right now
-            live at exactly this boundary: where explicit supervision ends and implicit structure begins.
-          </div>
-        </li>
-      </ul>
-    </section>
-
-    <hr>
-
     <!-- ========== NEWS ========== -->
     <section class="section" id="news">
       <h2>News</h2>
       <table class="news-table">
-        <tr><td class="date">May 2026</td><td class="desc">Undergraduate thesis defended -<strong>"What Dice Misses": Size Penalty Loss</strong></td></tr>
+        <tr><td class="date">Aug 2026</td><td class="desc">Started research at <a href="https://www.iairo.ai/" target="_blank"><strong>Indian AI Research Organisation (IAIRO)</strong></a> in <strong>Pre-training</strong></td></tr>
+        <tr><td class="date">May 2026</td><td class="desc">Undergraduate thesis defended — <strong>"What Dice Misses": Size Penalty Loss</strong></td></tr>
         <tr><td class="date">Apr 2026</td><td class="desc">Began visiting research at <strong>UCSF</strong>, USA with <a href="https://medicine.ucsf.edu/people/vivek-rudrapatna" target="_blank">Dr. Vivek Rudrapatna</a></td></tr>
         <tr><td class="date">Jan 2026</td><td class="desc">Exchange semester at <strong>IIT Bombay</strong>, Koita Centre for Digital Health</td></tr>
         <tr><td class="date">Aug 2025</td><td class="desc">Started research at <strong>IIT Bombay</strong> with <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank">Dr. Kshitij Jadhav</a></td></tr>
@@ -424,11 +513,7 @@
       </div>
     </section>
 
-    <!-- Morse Code & Signature -->
-    <div style="text-align: center; margin-top: 5rem; margin-bottom: 2rem;">
-      <div style="color: var(--text-muted); font-size: 14px; letter-spacing: 2px; margin-bottom: 1rem;">
-        .-- . / .-- .. -. -.-.-- -.-.-- -.-.--
-      </div>
+    <div class="profile-signoff" aria-label="Mohit Joshi signature">
       <img src="assets/img/perfect_sign.png" alt="Mohit Signature" class="signature-img">
     </div>
   </div>
@@ -449,7 +534,7 @@
     </div>
   </div>
 
-  <script src="assets/js/main.js?v=2"></script>
+  <script src="assets/js/main.js?v=6"></script>
   <script>
     function toggleAbstract(btn) {
       const abstract = btn.nextElementSibling;
