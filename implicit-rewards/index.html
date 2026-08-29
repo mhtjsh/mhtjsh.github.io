@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain-Agnostic Implicit Rewards | Mohit Joshi</title>
+  <meta name="description" content="A research direction on implicit rewards, epistemic complexity, and reasoning quality in generative models.">
+  <meta name="author" content="Mohit Joshi">
+  <meta property="og:title" content="Domain-Agnostic Implicit Rewards in Generative Models">
+  <meta property="og:description" content="A research direction on non-rewardable reinforcement learning and epistemically productive reasoning.">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2026-05-30">
+  <meta property="article:tag" content="RL">
+  <meta property="article:tag" content="Domain Adaptation">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="canonical" href="https://mhtjsh.github.io/implicit-rewards/">
+  <link rel="stylesheet" href="../assets/css/style.css?v=7">
+  <link rel="icon" href="../assets/img/perfect_sign.jpg" type="image/jpeg">
+</head>
+<body class="research-article-page">
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-brand" aria-label="Mohit Joshi home">
+        <span class="brand-mark"><img src="../assets/img/perfect_sign.png" alt="" class="brand-emblem"><span class="brand-label">Home</span></span>
+      </a>
+      <div class="nav-group">
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="../#about">About</a></li>
+          <li><a href="../#experience">Experience</a></li>
+          <li><a href="../#research">Research</a></li>
+          <li><a href="../technical/" class="active">Technical Writeups</a></li>
+          <li><a href="../#teaching">Teaching</a></li>
+          <li><a href="../#courses">Courses</a></li>
+        </ul>
+        <div class="nav-right">
+          <button id="light-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+          <button class="nav-toggle" id="menuToggle" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="article-page">
+    <div class="article-toolbar">
+      <a href="../technical/" class="writing-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All technical writing</a>
+    </div>
+
+    <article class="prose research-article">
+      <header class="article-head">
+        <div class="article-meta">May 2026</div>
+        <div class="blog-tags" aria-label="Topics">
+          <span class="blog-tag">RL</span>
+          <span class="blog-tag">Domain Adaptation</span>
+        </div>
+        <h1>Domain-Agnostic Implicit Rewards in Generative Models - Decoupling Reasoning Quality from Quantity of Knowledgeable</h1>
+        <p class="article-deck">A base hypothesis for finding behavioral signals inside reasoning trajectories, measuring their epistemic value, and using them to guide recursive language models without outcome supervision.</p>
+      </header>
+
+      <div class="article-note">
+        <strong>Work status:</strong> This is a working hypothesis and experimental plan. The claims below are intended to be falsifiable. They should not be read as completed empirical results.
+      </div>
+
+      <aside class="article-tldr" aria-label="TL;DR">
+        <div class="article-tldr-label">TL;DR</div>
+        <ol class="article-tldr-list">
+          <li><strong>Problem:</strong> Models are judged by their final answers, even when the reasoning path is poor.</li>
+          <li><strong>Hypothesis:</strong> Useful reasoning has recognizable patterns before the final answer is known.</li>
+          <li><strong>Measurement:</strong> Use Epiplexity to identify exploration, structuring, and self-correction in a reasoning trace.</li>
+          <li><strong>How to Apply:</strong> Turn those signals into rewards that guide Recursive Language Models.</li>
+          <li><strong>Proof required:</strong> The signals must transfer across domains and beat perplexity and uncertainty baselines at the same compute budget.</li>
+        </ol>
+      </aside>
+
+      <h2>1. The research question</h2>
+
+      <p>
+        I am investigating whether systematic guardrails for
+        <a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Recursive Language Models (RLMs)</a>
+        can be learned from the behavior of reasoning trajectories themselves. The proposed setting is a model
+        operating over very long or recursively expanded context, where it must decide when to explore a new
+        path, when to reorganize its current thoughts, and when to stop following an unproductive direction.
+      </p>
+
+      <p>
+        Most reinforcement learning systems depend on an explicit outcome reward. Many open-ended reasoning
+        problems do not provide one at the moment it is needed. A scientific hypothesis can be promising before
+        it is verified. A line of reasoning can be well structured while its final answer remains unknown. The
+        central question is therefore whether useful reward signals can be recovered from the form and evolution
+        of intermediate reasoning, without relying on a ground-truth label for every step.
+      </p>
+
+      <blockquote>
+        Can domain-agnostic patterns in intermediate reasoning serve as implicit rewards that help a recursive model explore, structure, and correct its own reasoning?
+      </blockquote>
+
+      <p>
+        The broader hypothesis is that adaptive capacity is not determined only by how much knowledge a model
+        stores. It also depends on the path the model takes through a problem, how it distinguishes known from
+        unknown, and whether it can recognize when its current navigation is epistemically productive.
+      </p>
+
+      <h2>2. What an implicit reward would represent</h2>
+
+      <p>
+        The proposal begins with three candidate families of behavior. These are not assumed to be correct in
+        advance. They are starting points that the experiments must either support, refine, or reject.
+      </p>
+
+      <ul>
+        <li><strong>Exploration:</strong> the model opens genuinely distinct reasoning paths instead of repeating surface variations of the same idea.</li>
+        <li><strong>Structuring:</strong> the model organizes evidence, intermediate claims, and dependencies into a useful order.</li>
+        <li><strong>Penalization or self-correction:</strong> the model identifies a weak trajectory, reduces attention to it, and redirects computation.</li>
+      </ul>
+
+      <p>
+        A recurring phrase or a stylistic marker is not enough to qualify as a reward. A candidate signal becomes
+        meaningful only if it predicts productive reasoning across models and domains, survives controls for
+        lexical content and perplexity, and can causally improve later reasoning when used as feedback.
+      </p>
+
+      <p>
+        This leads to a stricter definition: an implicit reward is a measurable property of an intermediate
+        reasoning segment that predicts or causes better allocation of future reasoning effort, without being
+        reducible to final-answer correctness alone.
+      </p>
+
+      <h2>3. Epiplexity as a proposed measurement</h2>
+
+      <p>
+        The proposal uses
+        <a href="https://arxiv.org/abs/2601.03220" target="_blank" rel="noopener"><em>Epiplexity</em></a>,
+        interpreted here as epistemic complexity, to estimate which reasoning segments contain learnable
+        structure that is not yet captured by an earlier model state. The central intuition is prequential:
+        compare how surprising a reasoning segment is to a model during learning with how surprising it is to
+        the final trained model.
+      </p>
+
+      <div class="technical-equation">
+        \[S_{\mathrm{preq}} \approx \sum_i \left[\log\frac{1}{P_i(x_i)}-\log\frac{1}{P_m(x_i)}\right]\]
+      </div>
+
+      <p>
+        Here, \(P_i\) is the model at an intermediate training step, \(P_m\) is the final trained model, and
+        \(x_i\) is part of the reasoning trace. The area between the intermediate loss and the final loss is a
+        candidate measure of how much useful structure had to be learned.
+      </p>
+
+      <div class="technical-equation">
+        \[\operatorname{Epiplexity}(c) \approx \sum_{t=1}^{m-1}\left[L_t(c)-L_m(c)\right]\]
+      </div>
+
+      <p>
+        The unit of analysis should be a reasoning chunk rather than an isolated token. A chunk may express a
+        hypothesis, a correction, a branch, or a synthesis. Chunk-level measurement is important because the
+        proposed rewards concern the topology of a reasoning trajectory, not the probability of a single word.
+      </p>
+
+      <p>
+        The working prediction is that useful exploration, structuring, and correction will produce distinguishable
+        Epiplexity profiles. Those profiles must also differ systematically between successful and unsuccessful
+        trajectories after controlling for length, vocabulary, model confidence, and ordinary perplexity.
+      </p>
+
+      <h2>4. The claims that need to be tested</h2>
+
+      <ol>
+        <li>Behavioral patterns associated with exploration, structuring, and self-correction recur across model families and problem domains.</li>
+        <li>These patterns can be detected from intermediate reasoning behavior without using the final answer as a label for every step.</li>
+        <li>The detected patterns can be translated into reward proxies that improve the allocation of recursive reasoning calls.</li>
+        <li>Epiplexity distinguishes productive structure from simple token-level surprise or uncertainty.</li>
+        <li>Rewards discovered in one domain can transfer to another domain with little or no task-specific intervention.</li>
+        <li>A smaller model equipped with these guardrails can sometimes outperform a much larger unguarded model under a matched reasoning budget.</li>
+      </ol>
+
+      <p>
+        The last claim is deliberately the strongest and most speculative. The research program remains useful
+        even if it fails. A negative result would still establish where reasoning-process signals stop
+        transferring and which advantages continue to depend on model scale.
+      </p>
+
+      <h2>5. Phase one: discovering candidate rewards</h2>
+
+      <p>
+        The first phase asks whether the proposed behavioral signals exist and whether they are robust. It does
+        not yet place them inside a reinforcement learning loop.
+      </p>
+
+      <h3>Build a diverse reasoning corpus</h3>
+
+      <p>
+        Generate reasoning trajectories under controlled settings across mathematics, medical reasoning,
+        scientific reasoning, ARC-style tasks, and other long-context problems. The corpus should include
+        correct and incorrect outcomes, multiple seeds, several model families, and models at meaningfully
+        different scales. A multilingual subset would test whether the signal depends on English phrasing.
+      </p>
+
+      <h3>Segment trajectories into behavioral chunks</h3>
+
+      <p>
+        Instead of labeling individual tokens, divide each trajectory into semantically coherent steps. For each
+        chunk, estimate properties such as diversity, convergence, recurrence, and compositionality.
+      </p>
+
+      <ul>
+        <li><strong>Diversity:</strong> how different a new branch is from the paths already considered.</li>
+        <li><strong>Convergence:</strong> whether several branches begin to support the same intermediate conclusion.</li>
+        <li><strong>Recurrence:</strong> whether a behavior appears repeatedly across a trajectory or dataset.</li>
+        <li><strong>Compositionality:</strong> whether the same behavior has a stable role across domains and tasks.</li>
+      </ul>
+
+      <h3>Compare behavioral measures with Epiplexity</h3>
+
+      <p>
+        Train a small language model on the reasoning corpus and measure chunk-level prequential loss across
+        training. The critical analysis is whether the chunks that the small model learns most strongly align
+        with behavioral patterns that distinguish productive reasoning from unproductive reasoning.
+      </p>
+
+      <h3>Test transfer before calling anything universal</h3>
+
+      <p>
+        Discover a candidate signal on one set of domains, freeze its definition, and evaluate it on unseen
+        domains and model families. A signal that requires a new hand-crafted interpretation for every task is
+        not domain agnostic. It is a task-specific heuristic.
+      </p>
+
+      <h2>6. Phase two: applying rewards to recursive models</h2>
+
+      <p>
+        The second phase converts validated behavioral proxies into feedback for an RLM. The model receives a
+        task and repeatedly calls a smaller language model over an expanding context. A guardrail observes the
+        intermediate trajectory and influences which branch should be continued, reorganized, or stopped.
+      </p>
+
+      <p>Three guardrail designs should be compared:</p>
+
+      <ol>
+        <li><strong>Prompt-conditioned guardrails:</strong> reward feedback is inserted directly into the next recursive prompt.</li>
+        <li><strong>A shared GuardianLM:</strong> one dedicated model evaluates all candidate reward signals and recommends the next action.</li>
+        <li><strong>Specialized guardians:</strong> separate evaluators score exploration, structuring, and correction before their outputs are combined.</li>
+      </ol>
+
+      <p>
+        The controls must include an unguarded RLM, a conventional language model with the same token and call
+        budget, outcome-reward baselines, and matched prompting baselines. Improvement must be measured not only
+        in final accuracy, but also in the number of recursive calls, total tokens, latency, and stability across
+        seeds.
+      </p>
+
+      <h2>7. Alternative explanations and decisive controls</h2>
+
+      <table>
+        <thead>
+          <tr><th>Skeptical explanation</th><th>Control that would address it</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>The signal is only a set of transition phrases.</td><td>Paraphrase or remove common markers, then test whether the behavioral score and intervention effect remain.</td></tr>
+          <tr><td>The signal is ordinary perplexity or uncertainty.</td><td>Match chunks on perplexity, entropy, length, and confidence, then test whether Epiplexity adds predictive value.</td></tr>
+          <tr><td>The result is specific to one model.</td><td>Replicate across independently trained model families, sizes, seeds, and reasoning styles.</td></tr>
+          <tr><td>The pattern comes from shared training data.</td><td>Use synthetic domains, a separately trained small model, and held-out languages or task families.</td></tr>
+          <tr><td>The signal correlates with success but does not cause it.</td><td>Intervene on matched trajectories and test whether reward-guided continuation changes later reasoning quality.</td></tr>
+          <tr><td>The method wins only by spending more compute.</td><td>Match token count, model calls, latency, and total inference cost across all baselines.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>8. What a convincing result would look like</h2>
+
+      <ul>
+        <li>A frozen reward detector predicts productive reasoning on unseen domains better than perplexity, confidence, and lexical baselines.</li>
+        <li>Rewards learned on domain A improve reasoning on domain B without rewriting the reward definition.</li>
+        <li>A guarded RLM reaches equal or better accuracy with fewer or equal recursive calls under a matched context budget.</li>
+        <li>Ablating any genuinely useful reward produces a consistent and interpretable failure mode.</li>
+        <li>The effect survives multiple seeds, model families, languages, and long-context benchmarks.</li>
+      </ul>
+
+      <p>
+        A benchmark win by itself would not establish the hypothesis. The stronger result is a reusable principle:
+        reasoning quality can be improved by measuring and controlling the organization of intermediate thought,
+        and the relevant signals transfer beyond the domain in which they were discovered.
+      </p>
+
+      <h2>9. Why this could open a broader research program</h2>
+
+      <p>
+        If the hypothesis is supported, reasoning trajectories become more than hidden scaffolding used to reach
+        an answer. They become a measurable form of data. Models could then be compared by behavioral capacities
+        such as exploration, correction, and synthesis, alongside conventional comparisons based on parameter
+        count and benchmark accuracy.
+      </p>
+
+      <p>
+        The idea also connects information theory, reinforcement learning, long-context systems, mechanistic
+        interpretability, and AI for science. A successful measure could be useful both after training, as a
+        guardrail for recursive inference, and during training, as a way to prioritize reasoning structures that
+        support productive adaptation.
+      </p>
+
+      <h2>10. Open questions</h2>
+
+      <ul>
+        <li>What does enough exploration look like, and can a model recognize when additional branches no longer add epistemic value?</li>
+        <li>Do recursive models develop higher-level abstractions over their own reasoning before those abstractions appear in text?</li>
+        <li>Which behaviors exist beyond exploration, structuring, and correction?</li>
+        <li>Can a model verify that a hypothesis is novel by drawing evidence from distant and initially irrelevant domains?</li>
+        <li>Can autonomous discovery be evaluated without quietly reintroducing human outcome labels?</li>
+      </ul>
+
+      <h2>Current scope</h2>
+
+      <p>
+        This writeup defines the base hypothesis. The immediate goal is narrower than autonomous scientific
+        discovery: determine whether cross-domain behavioral signals exist in reasoning traces, whether
+        Epiplexity measures something beyond perplexity, and whether controlled interventions based on those
+        signals improve recursive reasoning under a matched compute budget. Those results should decide which
+        parts of the larger vision deserve to become a full research program.
+      </p>
+
+      <h2>References</h2>
+
+      <p class="references-note">
+        These references are carried forward from the base proposal and ordered by their relevance to this research direction.
+      </p>
+
+      <ol class="references-list">
+        <li>
+          <span class="reference-authors">Finzi, M., Qiu, S., Jiang, Y., Izmailov, P., Kolter, J. Z., and Wilson, A. G. (2026).</span>
+          <a href="https://arxiv.org/abs/2601.03220" target="_blank" rel="noopener"><cite>From Entropy to Epiplexity: Rethinking Information for Computationally Bounded Intelligence.</cite></a>
+          <span class="reference-id">arXiv:2601.03220.</span>
+        </li>
+        <li>
+          <span class="reference-authors">Chen, Q., Du, Y., Li, Z., et al. (2026).</span>
+          <a href="https://arxiv.org/abs/2601.06002" target="_blank" rel="noopener"><cite>The Molecular Structure of Thought: Mapping the Topology of Long Chain-of-Thought Reasoning.</cite></a>
+          <span class="reference-id">arXiv:2601.06002.</span>
+        </li>
+        <li>
+          <span class="reference-authors">Cui, G., Yuan, L., Wang, Z., et al. (2025).</span>
+          <a href="https://arxiv.org/abs/2502.01456" target="_blank" rel="noopener"><cite>Process Reinforcement through Implicit Rewards.</cite></a>
+          <span class="reference-id">arXiv:2502.01456.</span>
+          <span class="reference-context">PRIME is included as the closest process-reward baseline. It uses outcome labels to construct implicit process rewards, while this proposal investigates behavior-driven signals without outcome supervision.</span>
+        </li>
+        <li>
+          <span class="reference-authors">Zhang, A. L., Kraska, T., and Khattab, O. (2025).</span>
+          <a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener"><cite>Recursive Language Models.</cite></a>
+          <span class="reference-id">arXiv:2512.24601.</span>
+        </li>
+        <li>
+          <span class="reference-authors">Luyten, M. R., and van der Schaar, M. (2026).</span>
+          <a href="https://arxiv.org/abs/2601.00747" target="_blank" rel="noopener"><cite>The Reasoning-Creativity Trade-off: Toward Creativity-Driven Problem Solving.</cite></a>
+          <span class="reference-id">arXiv:2601.00747.</span>
+        </li>
+        <li>
+          <span class="reference-authors">Sharma, A., and Chopra, P. (2025).</span>
+          <a href="https://arxiv.org/abs/2510.08146" target="_blank" rel="noopener"><cite>Think Just Enough: Sequence-Level Entropy as a Confidence Signal for LLM Reasoning.</cite></a>
+          <span class="reference-id">arXiv:2510.08146.</span>
+        </li>
+        <li>
+          <span class="reference-authors">Charpentier, B., Senanayake, R., Kochenderfer, M., and Günnemann, S. (2022).</span>
+          <a href="https://arxiv.org/abs/2206.01558" target="_blank" rel="noopener"><cite>Disentangling Epistemic and Aleatoric Uncertainty in Reinforcement Learning.</cite></a>
+          <span class="reference-id">arXiv:2206.01558.</span>
+        </li>
+      </ol>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">&copy; 2026 Mohit Joshi. All rights reserved.</div>
+  </footer>
+
+  <script src="../assets/js/main.js?v=7"></script>
+</body>
+</html>
