@@ -9,12 +9,11 @@
   <meta property="og:title" content="Mohit Joshi">
   <meta property="og:description" content="Researcher working on reinforcement learning, medical AI, loss function design, and consciousness in language models.">
   <meta property="og:type" content="profile">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/inter-latin-normal-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/inter.css?v=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="canonical" href="https://mhtjsh.github.io/">
-  <link rel="stylesheet" href="assets/css/style.css?v=7">
+  <link rel="stylesheet" href="assets/css/style.css?v=11">
   <link rel="icon" href="assets/img/perfect_sign.jpg" type="image/jpeg">
 </head>
 <body class="research-profile-page">
@@ -99,7 +98,7 @@
             <strong>medical reasoning in language models</strong>, then moving into
             <strong>uncertainty quantification</strong> for clinical NLP, and eventually into
             <strong>computer vision for stroke segmentation</strong>, where I designed a
-            <a href="https://mhtjsh.github.io/Size-Penalty-Loss-Function/" target="_blank">novel mathematical loss function</a>
+            <a href="Size-Penalty-Loss-Function/" target="_blank">novel mathematical loss function</a>
             that became my undergraduate thesis.
           </p>
           <p>
@@ -113,9 +112,9 @@
           <p>
             My research interests sit at the intersection of <strong>Diffusion Language Model, Domain Adaptation (Robotics), and AI Safety</strong>.
             I'm drawn to problems like <i> implicit rewards (Non-rewardable RL) </i> through
-            <strong><a href="https://arxiv.org/abs/2601.03220" target="_blank" style="color: inherit;">Epiplexity</a></strong> &
+            <strong><a href="https://arxiv.org/abs/2601.03220" target="_blank">Epiplexity</a></strong> &
             <strong> statistical distribution in reasoning</strong> through <a href="https://arxiv.org/abs/2512.24601"
-              target="_blank" style="color: inherit;">Recursive Language Model</a>.
+              target="_blank">Recursive Language Model</a>.
           </p>
           <p>
             I am also interested in exploring other areas, for the sake of "Serendipity" in my Research, currently I am interested in <strong>Scientific Computing</strong> &
@@ -345,7 +344,7 @@
           <div class="pub-links">
             <a href="assets/docs/Thesis.pdf" class="pub-btn" target="_blank">Thesis PDF</a>
             <a href="assets/docs/presentation.pdf" class="pub-btn" target="_blank">Slides</a>
-            <a href="https://mhtjsh.github.io/Size-Penalty-Loss-Function/" class="pub-btn" target="_blank">Project Page</a>
+            <a href="Size-Penalty-Loss-Function/" class="pub-btn" target="_blank">Project Page</a>
           </div>
         </div>
       </div>
@@ -525,17 +524,17 @@
 
   <!-- ===== Command Palette ===== -->
   <div class="cmd-palette-overlay" id="cmdOverlay">
-    <div class="cmd-palette">
+    <div class="cmd-palette" role="dialog" aria-modal="true" aria-label="Jump to a section">
       <div class="cmd-header">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="cmdInput" placeholder="Search sections, projects, or keywords..." autocomplete="off" spellcheck="false">
+        <input type="text" id="cmdInput" placeholder="Jump to a section..." aria-label="Filter page sections" aria-controls="cmdResults" autocomplete="off" spellcheck="false">
         <div class="cmd-esc">ESC</div>
       </div>
       <div class="cmd-results" id="cmdResults"></div>
     </div>
   </div>
 
-  <script src="assets/js/main.js?v=7"></script>
+  <script src="assets/js/main.js?v=10"></script>
   <script>
     function toggleAbstract(btn) {
       const abstract = btn.nextElementSibling;

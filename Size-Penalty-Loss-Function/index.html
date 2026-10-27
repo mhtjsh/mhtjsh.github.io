@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Dice Misses: Size Penalty Loss</title>
+    
+    <!-- SEO / OpenGraph Metadata -->
+    <meta name="description" content="An interactive research paper exploring Size-Stratified Volume Regularization (Size Penalty Loss) for Ischemic Stroke Lesion Segmentation.">
+    <meta property="og:title" content="What Dice Misses: Size Penalty Loss">
+    <meta property="og:description" content="Interactive visual explanation of Size Penalty Loss for ischemic stroke segmentation. Explores the Dice blindspot and size-stratified gradients.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+      document.documentElement.dataset.theme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+    </script>
+    <link rel="preload" href="assets/fonts/inter-latin-normal-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/inter.css?v=1">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=5">
+</head>
+<body>
+
+<div class="layout-container">
+    
+    <!-- Left Sidebar: Sticky ToC -->
+    <nav class="toc-sidebar" id="tocSidebar" aria-label="Project sections">
+        <button class="toc-trigger" id="tocTrigger" type="button" aria-expanded="false" aria-controls="tocPanel" aria-label="Open project index"><i class="fa-solid fa-list-ul" aria-hidden="true"></i><span>Index</span></button>
+        <div class="toc-rail"></div>
+        <div class="toc-dots">
+            <div class="toc-dot active"></div>
+            <div class="toc-dot"></div>
+            <div class="toc-dot"></div>
+            <div class="toc-dot"></div>
+            <div class="toc-dot"></div>
+            <div class="toc-dot"></div>
+        </div>
+        <div class="toc-panel" id="tocPanel">
+            <div class="toc-panel-head">
+                <div class="toc-title">Contents</div>
+                <div class="toc-actions">
+                    <button id="projectThemeToggle" type="button" aria-label="Switch to dark theme"><i class="fa-solid fa-moon" aria-hidden="true"></i></button>
+                    <button class="toc-close" id="tocClose" type="button" aria-label="Close project index"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <ul class="toc-list">
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#fig1">1. The Dice Blindspot</a></li>
+                <li><a href="#fig2">2. Parameter Space</a></li>
+                <li><a href="#fig3">3. Loss Landscape</a></li>
+                <li><a href="#fig4">4. Complementarity</a></li>
+                <li><a href="#citation">Citation</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="article-content">
+        <header class="reveal">
+            <h1>"What Dice Misses": Size-Stratified Volume Regularization for Ischemic Stroke Lesion Segmentation</h1>
+            <div class="authors">Mohit Joshi</div>
+            <div class="affiliations">Koita Centre for Digital Health, Indian Institute of Technology Bombay</div>
+            <div style="text-align: center; margin-top: 25px; margin-bottom: 25px; display: flex; justify-content: center; gap: 15px;">
+                <a href="../assets/docs/Thesis.pdf" class="btn btn-primary" target="_blank" style="text-decoration: none;"><i class="fa-solid fa-file-pdf"></i> Thesis PDF</a>
+                <a href="../assets/docs/presentation.pdf" class="btn" target="_blank" style="text-decoration: none;"><i class="fa-solid fa-desktop"></i> Slides</a>
+            </div>
+        </header>
+
+        <section id="introduction" class="reveal">
+            <div class="abstract">
+                <strong>Abstract</strong>
+                Traditional overlap metrics like the Dice Similarity Coefficient intrinsically bias optimization toward large lesion volumes, systematically neglecting micro-embolic lesions ($< 5 \text{ mL}$). We introduce the <b>Size Penalty Loss (SPL)</b>, an auxiliary loss function that explicitly conditions volume regularization on ground-truth lesion size. By employing a continuous exponential size-decay function, SPL applies a massive corrective gradient specifically to missed small lesions while leaving large, well-segmented lesions unaffected.
+            </div>
+
+            <p>
+                The objective of this interactive document is to mathematically dissect and visually demonstrate the behaviour of the Size Penalty Loss function. The core premise is that relative volume errors (e.g., a $10\times$ over-prediction) should not be penalized equally across all scales. A $10\times$ over-prediction on a 50-voxel lesion is clinically critical, whereas a slight boundary error on a 2000-voxel lesion might yield the same relative mismatch but is clinically benign.
+            </p>
+
+            <div class="equation-block">
+                $$ \mathcal{L}_{\text{size}}(V_p, V_g) = \min\left(c, \exp\left(-\frac{V_g}{\tau_s}\right) \cdot \frac{|V_p - V_g|}{V_g + \varepsilon} \right) $$
+            </div>
+        </section>
+
+        <section id="fig1" class="reveal">
+            <h2>1. The Dice Blindspot: A Synchronized Simulation</h2>
+            <p>
+                The visualization below (Figure 1) compares the training dynamics of two identical networks over 150 epochs. <b>Network A</b> is trained exclusively with the Dice Loss. <b>Network B</b> is trained with Dice + SPL. 
+            </p>
+            <p>
+                Observe how the predicted volume boundaries (filled shapes) actively grow toward the ground-truth boundaries (green outlines). The numbers attached to the boundaries dynamically track the predicted voxel counts $V_p$. Dice successfully captures the large lesion (800 voxels) in both networks. However, because the small lesion (50 voxels) contributes negligibly to the aggregate Dice score, Network A's gradient for it collapses, leaving it missed. Network B, guided by SPL, successfully forces the predicted boundary of the small lesion to converge.
+            </p>
+
+            <div class="figure">
+                <div class="controls">
+                    <button class="btn btn-primary" id="btn-sim-play" onclick="toggleSim()">▶ Play Simulation</button>
+                    <button class="btn" onclick="resetSim()">↺ Reset</button>
+                    <div style="margin-left: 10px; font-family: var(--font-mono);">
+                        Epoch: <span id="sim-epoch-val">0</span> / 150
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="canvas-container">
+                        <canvas id="cvs-model-a" width="400" height="350"></canvas>
+                        <div class="info-panel">
+                            <b>Model A (Dice Only)</b><br>
+                            Dice: <span id="dice-a-val">0.000</span>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="cvs-model-b" width="400" height="350"></canvas>
+                        <div class="info-panel">
+                            <b>Model B (Dice + SPL)</b><br>
+                            Dice: <span id="dice-b-val">0.000</span><br>
+                            <span style="color:var(--color-pred-b)">SPL ∇: Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; height: 180px; width: 100%;">
+                    <canvas id="sim-chart"></canvas>
+                </div>
+
+                <div class="figure-caption">
+                    <strong>Figure 1: Synchronized training simulation.</strong> The green static outlines represent the ground truth volumes ($V_g$). The filled areas and accompanying floating text represent the model's current predicted volumes ($V_p$) at the given epoch. Notice how the predicted boundary for the small lesion in Model A stagnates, while Model B's SPL gradient actively expands the boundary to match the ground truth.
+                </div>
+            </div>
+        </section>
+
+        <section id="fig2" class="reveal">
+            <h2>2. Interactive Parameter Space Analysis</h2>
+            <p>
+                To understand why SPL successfully corrects the small lesion, we must examine its formulation. The loss is composed of a continuous size weight $W(V_g) = \exp\left(-\frac{V_g}{\tau_s}\right)$ and a relative volume error $E_{rel} = \frac{|V_p - V_g|}{V_g + \varepsilon}$. Use the sliders below to observe how the gradient magnitude scales dramatically for small lesions compared to large lesions, even when the relative error ratio is identical.
+            </p>
+
+            <div class="figure">
+                <div class="grid-2" style="align-items: start;">
+                    <div>
+                        <div class="slider-row">
+                            <label>G.T. Volume ($V_g$)</label>
+                            <input type="range" id="param-vg" min="10" max="3000" step="10" value="50" oninput="updateParams()">
+                            <span class="slider-val" id="val-vg">50</span>
+                        </div>
+                        <div class="slider-row">
+                            <label>Pred Volume ($V_p$)</label>
+                            <input type="range" id="param-vp" min="0" max="6000" step="10" value="500" oninput="updateParams()">
+                            <span class="slider-val" id="val-vp">500</span>
+                        </div>
+                        <div class="slider-row">
+                            <label>Tau ($\tau_s$)</label>
+                            <input type="range" id="param-tau" min="100" max="2000" step="50" value="600" oninput="updateParams()">
+                            <span class="slider-val" id="val-tau">600</span>
+                        </div>
+
+                        <div class="param-output">
+                            <div>Ratio ($V_p/V_g$): <span id="out-ratio" style="float:right; font-weight:bold;">10.00</span></div>
+                            <div style="margin-top: 8px;">Weight $W(V_g)$: <span id="out-w" style="float:right;">0.9200</span></div>
+                            <div style="margin-top: 8px;">Error $E_{rel}$: <span id="out-e" style="float:right;">9.0000</span></div>
+                            <hr style="border:none; border-top: 1px solid var(--border-color); margin: 10px 0;">
+                            <div>Loss $\mathcal{L}_{\text{size}}$: <span id="out-l" style="float:right; font-weight:bold; color: var(--color-pred-b);">8.2800</span></div>
+                        </div>
+                        <div id="clamp-warn" style="color: var(--color-pred-b); font-size: 0.8rem; font-family: var(--font-sans); margin-top: 10px; font-weight: bold; display:none;">
+                            Gradient clamped to zero (c=10 bound hit)
+                        </div>
+                    </div>
+                    
+                    <div style="height: 250px;">
+                        <canvas id="param-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="figure-caption">
+                    <strong>Figure 2: Component decomposition.</strong> The chart visualizes the exponential weight $W(V_g)$ (blue line). The red dot indicates the current $V_g$ position. As $V_g$ increases towards the right, the penalty weight decays rapidly, completely separating the scale of optimization pressure applied to micro-lesions versus macro-lesions.
+                </div>
+            </div>
+        </section>
+
+        <section id="fig3" class="reveal">
+            <h2>3. Optimization Surface and Convergence</h2>
+            <p>
+                We can visualize this size-conditioned optimization as gradient descent on a 2D loss landscape. The convergence speed is directly proportional to $W(V_g)$. <b>Click anywhere on the plot below</b> to spawn a new particle and observe its descent trajectory in real-time. Notice how particles dropped on the left ($V_g < 500$) plummet to the optimal manifold instantly, whereas particles on the right ($V_g > 2000$) experience severe gradient decay. The faint red curves represent the contour lines of the loss surface, visually demonstrating the steep "valley" for small lesions that widens into a flat plain for large lesions.
+            </p>
+
+            <div class="figure">
+                <div class="controls">
+                    <button class="btn btn-primary" id="btn-land-play" onclick="toggleLand()">⏸ Pause Descent</button>
+                    <button class="btn" onclick="clearParticles()">🗑 Clear Particles</button>
+                    <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+                        (Click canvas to spawn)
+                    </span>
+                </div>
+                <div class="canvas-container" style="height: 350px; cursor: crosshair;">
+                    <canvas id="cvs-landscape"></canvas>
+                </div>
+                <div class="figure-caption">
+                    <strong>Figure 3: Interactive Loss Landscape $\mathcal{L}_{\text{size}}(V_g, V_p/V_g)$.</strong> Particles simulate gradient descent from mispredicted ratios toward the optimal manifold (Ratio = 1.0). The vertical position represents the error ratio, while the horizontal position represents ground-truth size. By clicking to spawn particles, you can empirically verify that the gradient magnitude (descent speed) is strictly governed by the exponential size weight $W(V_g)$.
+                </div>
+            </div>
+        </section>
+
+        <section id="fig4" class="reveal">
+            <h2>4. The "Aha!" Moment: Complementary Optimization Spectra</h2>
+            <p>
+                The true elegance of SPL lies in its complementary relationship with traditional overlap metrics. If we compute the theoretical per-voxel gradient magnitude for a missed lesion, we observe a stark divergence. Dice gradients are intrinsically holistic—if a patient has one massive lesion ($V_{\text{bg}} = 2000$), the Dice gradient for a newly emerging micro-lesion is heavily suppressed by the global intersection sum. SPL, however, is isolated. It injects a massive, localized optimization pressure precisely where the Dice gradient collapses.
+            </p>
+
+            <div class="figure">
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="grad-chart"></canvas>
+                </div>
+                <div class="figure-caption">
+                    <strong>Figure 4: Gradient Magnitude Complementarity.</strong> The y-axis (log scale) shows the per-voxel gradient magnitude for a missed lesion of size $V_g$. The Dice gradient (blue) remains relatively flat and suppressed due to the presence of a 2000-voxel background lesion. The SPL gradient (red) acts as an explicit "micro-lesion amplifier," crossing over to dominate the optimization dynamics exactly in the $< 5 \text{ mL}$ regime.
+                </div>
+            </div>
+        </section>
+
+        <section id="citation" class="reveal">
+            <div class="citation-box">
+                <h4>Cite this work</h4>
+                <p style="font-size: 0.9rem; margin-top:0;">If you found this visualization or research helpful, please consider citing our work:</p>
+                <pre>
+@article{joshi2026spl,
+    title={What Dice Misses: Size-Stratified Volume Regularization for Ischemic Stroke Lesion Segmentation},
+    author={Joshi, Mohit},
+    year={2026},
+    institution={Koita Centre for Digital Health, IIT Bombay}
+}
+                </pre>
+            </div>
+        </section>
+        
+    </main>
+</div>
+
+<!-- Core Logic Scripts -->
+<script src="assets/js/main.js?v=4"></script>
+<script src="assets/js/simulation.js?v=4"></script>
+<script src="assets/js/parameters.js"></script>
+<script src="assets/js/landscape.js?v=4"></script>
+<script src="assets/js/complementarity.js"></script>
+
+</body>
+</html>

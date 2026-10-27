@@ -32,19 +32,18 @@ const html = document.documentElement;
 const toggleBtn = document.getElementById('light-toggle');
 
 function setTheme(t) {
-  html.classList.add('transition');
   html.setAttribute('data-theme', t);
   if (toggleBtn) {
     toggleBtn.innerHTML = t === 'dark'
       ? '<i class="fa-solid fa-sun"></i>'
       : '<i class="fa-solid fa-moon"></i>';
+    toggleBtn.setAttribute('aria-label', `Switch to ${t === 'dark' ? 'light' : 'dark'} theme`);
   }
   localStorage.setItem('theme', t);
-  setTimeout(() => html.classList.remove('transition'), 650);
 }
 
 const saved = localStorage.getItem('theme');
-if (saved) setTheme(saved);
+setTheme(saved === 'dark' ? 'dark' : 'light');
 
 if (toggleBtn) {
   toggleBtn.onclick = () => setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
@@ -150,75 +149,61 @@ const tocClose = document.getElementById('tocClose');
 const tocProgress = document.getElementById('tocProgress');
 const tocLinks = document.querySelectorAll('.toc-list a[href^="#"]');
 const sectionIds = [];
-let tocCloseTimer = null;
-let tocPinnedOpen = false;
+// The desktop contents rail occupies only the existing left gutter.
+const desktopTOC = window.matchMedia('(min-width: 1280px) and (hover: hover) and (pointer: fine)');
 tocLinks.forEach(link => {
   const id = link.getAttribute('href');
   if (id) sectionIds.push({ id: id.slice(1), link });
+  link.setAttribute('aria-label', link.textContent.replace(/^\d+\s*/, '').trim());
 });
 
-function setTOCOpen(isOpen) {
+function setTOCOpen(isOpen, remember = true) {
   if (!tocSidebar || !tocTrigger) return;
   const indexName = tocSidebar.classList.contains('blog-toc') ? 'article index' : 'page index';
   tocSidebar.classList.toggle('is-open', isOpen);
   tocTrigger.setAttribute('aria-expanded', String(isOpen));
   tocTrigger.setAttribute('aria-label', `${isOpen ? 'Close' : 'Open'} ${indexName}`);
+  if (tocPanel) tocPanel.inert = !desktopTOC.matches && !isOpen;
+  if (desktopTOC.matches && remember) localStorage.setItem('toc-collapsed', String(!isOpen));
 }
 
-function cancelTOCClose() {
-  if (tocCloseTimer) window.clearTimeout(tocCloseTimer);
-  tocCloseTimer = null;
+function syncTOCLayout() {
+  setTOCOpen(desktopTOC.matches && localStorage.getItem('toc-collapsed') !== 'true', false);
 }
 
-function openTOCOnHover() {
-  cancelTOCClose();
-  setTOCOpen(true);
-}
-
-function scheduleTOCClose() {
-  cancelTOCClose();
-  if (tocPinnedOpen) return;
-  tocCloseTimer = window.setTimeout(() => setTOCOpen(false), 350);
-}
+desktopTOC.addEventListener('change', syncTOCLayout);
+syncTOCLayout();
 
 if (tocTrigger) {
   tocTrigger.addEventListener('click', () => {
-    cancelTOCClose();
-    tocPinnedOpen = !tocPinnedOpen;
-    setTOCOpen(tocPinnedOpen);
+    setTOCOpen(!tocSidebar.classList.contains('is-open'));
+    if (desktopTOC.matches && tocClose) tocClose.focus({ preventScroll: true });
   });
-}
-if (tocSidebar && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-  tocSidebar.addEventListener('mouseenter', openTOCOnHover);
-  tocSidebar.addEventListener('mouseleave', scheduleTOCClose);
-  if (tocPanel) {
-    tocPanel.addEventListener('mouseenter', openTOCOnHover);
-    tocPanel.addEventListener('mouseleave', scheduleTOCClose);
-  }
 }
 if (tocClose) {
   tocClose.addEventListener('click', () => {
-    tocPinnedOpen = false;
     setTOCOpen(false);
+    tocTrigger.focus({ preventScroll: true });
   });
 }
 tocLinks.forEach(link => link.addEventListener('click', () => {
-  tocPinnedOpen = false;
-  setTOCOpen(false);
+  if (!desktopTOC.matches) {
+    setTOCOpen(false);
+    tocTrigger.focus({ preventScroll: true });
+  }
 }));
 
 document.addEventListener('click', event => {
-  if (tocSidebar && tocSidebar.classList.contains('is-open') && !tocSidebar.contains(event.target)) {
-    tocPinnedOpen = false;
+  if (!desktopTOC.matches && tocSidebar && !tocSidebar.contains(event.target)) {
     setTOCOpen(false);
   }
 });
 
 function updateTOC() {
-  let current = '';
+  let current = sectionIds[0]?.id || '';
   sectionIds.forEach(({ id }) => {
     const el = document.getElementById(id);
-    if (el && window.scrollY >= el.offsetTop - 140) current = id;
+    if (el && el.getBoundingClientRect().top <= 140) current = id;
   });
 
   sectionIds.forEach(({ id, link }) => {
@@ -281,7 +266,7 @@ const previewData = {
     desc: 'Assistant Professor, Biosciences & Bioengineering Department, IIT Jodhpur. Research in structural biology, protein-DNA interactions, and computational biophysics.',
     type: 'Professor'
   },
-  'https://mhtjsh.github.io/Size-Penalty-Loss-Function/': {
+  'Size-Penalty-Loss-Function/': {
     title: 'Size Penalty Loss — Project Page',
     desc: 'Interactive visual explanation of Size Penalty Loss for ischemic stroke segmentation. Explores the Dice blindspot and size-stratified gradients.',
     type: 'Project'
@@ -432,54 +417,23 @@ document.querySelectorAll('a[href]').forEach(link => {
 
 
 // ==========================================
-// Command Palette (Dynamic DOM Search)
+// Command palette: major page sections only.
 // ==========================================
 let searchData = [];
 
 function buildSearchIndex() {
-  searchData = [];
-  const container = document.querySelector('.container');
-  if (!container) return;
-  
-  const sections = document.querySelectorAll('section[id]');
-  sections.forEach(sec => {
-    const secId = sec.id;
-    const h2 = sec.querySelector('h2');
-    const secTitle = h2 ? h2.innerText : secId.charAt(0).toUpperCase() + secId.slice(1);
-    
-    // Add section
-    searchData.push({
-      title: secTitle,
-      desc: 'Section',
-      id: secId,
-      type: 'section',
-      rawText: secTitle
-    });
-
-    // Add text nodes inside section
-    const textNodes = sec.querySelectorAll('p, li, .pub-title, .post-title, h3, .pub-abstract');
-    textNodes.forEach((node, idx) => {
-      const text = node.innerText.trim().replace(/\n/g, ' ');
-      if (text.length > 15) {
-        let nodeId = node.id;
-        if (!nodeId) {
-          nodeId = `search-node-${secId}-${idx}`;
-          node.id = nodeId;
-        }
-        searchData.push({
-          title: text.substring(0, 65) + (text.length > 65 ? '...' : ''),
-          desc: `In ${secTitle}`,
-          id: nodeId,
-          type: 'text',
-          rawText: text
-        });
-      }
-    });
+  const sections = document.querySelectorAll('.research-profile-page > .container > section[id]');
+  searchData = Array.from(sections, section => {
+    const navLink = Array.from(tocLinks).find(link => link.getAttribute('href') === '#' + section.id);
+    const heading = section.querySelector('h2');
+    const title = navLink
+      ? navLink.textContent.replace(/^\d+\s*/, '').trim()
+      : heading ? heading.textContent.trim() : section.id;
+    return { title, id: section.id };
   });
 }
 
-// Call initially
-setTimeout(buildSearchIndex, 500);
+buildSearchIndex();
 
 const cmdOverlay = document.getElementById('cmdOverlay');
 const cmdInput = document.getElementById('cmdInput');
@@ -487,85 +441,78 @@ const cmdResults = document.getElementById('cmdResults');
 const cmdBtn = document.getElementById('cmdBtn');
 let selectedCmdIndex = 0;
 let filteredData = [];
+let cmdPreviousFocus = null;
+
+if (cmdOverlay) cmdOverlay.inert = true;
 
 function openCmd() {
-  if(!cmdOverlay) return;
+  if (!cmdOverlay) return;
+  cmdPreviousFocus = document.activeElement;
+  cmdOverlay.inert = false;
   cmdOverlay.classList.add('active');
-  if(cmdInput) {
-    cmdInput.value = '';
-    setTimeout(() => cmdInput.focus(), 50);
-  }
+  if (cmdInput) cmdInput.value = '';
   renderCmdResults('');
+  if (cmdInput) cmdInput.focus({ preventScroll: true });
 }
 
 function closeCmd() {
-  if(!cmdOverlay) return;
+  if (!cmdOverlay) return;
   cmdOverlay.classList.remove('active');
-  if(cmdInput) cmdInput.blur();
+  cmdOverlay.inert = true;
+  if (cmdPreviousFocus) cmdPreviousFocus.focus({ preventScroll: true });
 }
 
 if (cmdBtn) cmdBtn.addEventListener('click', openCmd);
 
 function renderCmdResults(query) {
-  if(!cmdResults) return;
-  const q = query.toLowerCase().trim();
+  if (!cmdResults) return;
+  const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   const palette = document.querySelector('.cmd-palette');
-  
-  if (!q) {
-    filteredData = [];
-    cmdResults.innerHTML = '';
-    if (palette) palette.classList.remove('has-results');
-    return;
-  }
-  
   if (palette) palette.classList.add('has-results');
-
-  filteredData = searchData.filter(item => 
-    item.rawText.toLowerCase().includes(q)
-  ).slice(0, 8);
-  
+  filteredData = searchData.filter(item => terms.every(term => item.title.toLowerCase().includes(term)));
   selectedCmdIndex = 0;
-  
-  if (filteredData.length === 0) {
-    cmdResults.innerHTML = '<div class="cmd-empty">No results found.</div>';
+  cmdResults.replaceChildren();
+
+  if (!filteredData.length) {
+    const empty = document.createElement('div');
+    empty.className = 'cmd-empty';
+    empty.setAttribute('role', 'status');
+    empty.textContent = 'No matching sections.';
+    cmdResults.appendChild(empty);
     return;
   }
 
-  cmdResults.innerHTML = filteredData.map((item, i) => `
-    <a href="#${item.id}" class="cmd-item ${i === 0 ? 'selected' : ''}" data-index="${i}">
-      <div class="cmd-item-title">${item.title}</div>
-      <div class="cmd-item-desc">${item.desc}</div>
-    </a>
-  `).join('');
-
-  document.querySelectorAll('.cmd-item').forEach(el => {
-    el.addEventListener('click', () => closeCmd());
-    el.addEventListener('mouseenter', () => {
-      document.querySelectorAll('.cmd-item').forEach(e => e.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedCmdIndex = parseInt(el.getAttribute('data-index'));
+  filteredData.forEach((item, index) => {
+    const link = document.createElement('a');
+    link.href = '#' + item.id;
+    link.className = 'cmd-item' + (index === 0 ? ' selected' : '');
+    link.dataset.index = index;
+    const title = document.createElement('span');
+    title.className = 'cmd-item-title';
+    title.textContent = item.title;
+    link.appendChild(title);
+    link.addEventListener('click', closeCmd);
+    link.addEventListener('mouseenter', () => {
+      selectedCmdIndex = index;
+      updateCmdSelection(cmdResults.querySelectorAll('.cmd-item'));
     });
+    cmdResults.appendChild(link);
   });
 }
 
 if (cmdInput) {
-  cmdInput.addEventListener('input', (e) => renderCmdResults(e.target.value));
-
-  cmdInput.addEventListener('keydown', (e) => {
-    if (filteredData.length === 0) return;
-    const items = document.querySelectorAll('.cmd-item');
-    
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      selectedCmdIndex = (selectedCmdIndex + 1) % filteredData.length;
+  cmdInput.addEventListener('input', event => renderCmdResults(event.target.value));
+  cmdInput.addEventListener('keydown', event => {
+    if (!filteredData.length) return;
+    const items = cmdResults.querySelectorAll('.cmd-item');
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const direction = event.key === 'ArrowDown' ? 1 : -1;
+      selectedCmdIndex = (selectedCmdIndex + direction + items.length) % items.length;
       updateCmdSelection(items);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      selectedCmdIndex = (selectedCmdIndex - 1 + filteredData.length) % filteredData.length;
-      updateCmdSelection(items);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (items[selectedCmdIndex]) items[selectedCmdIndex].click();
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      items[selectedCmdIndex]?.click();
     }
   });
 }
@@ -589,14 +536,29 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'Escape' && cmdOverlay && cmdOverlay.classList.contains('active')) {
     closeCmd();
+    return;
   }
   if (e.key === 'Escape') {
-    tocPinnedOpen = false;
+    const focusWasInTOC = tocSidebar && tocSidebar.contains(document.activeElement);
     setTOCOpen(false);
+    if (focusWasInTOC && tocTrigger) tocTrigger.focus({ preventScroll: true });
   }
 });
 
 if (cmdOverlay) {
+  cmdOverlay.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const focusable = [cmdInput, ...cmdResults.querySelectorAll('.cmd-item')].filter(Boolean);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
   cmdOverlay.addEventListener('click', (e) => {
     if (e.target === cmdOverlay) closeCmd();
   });
