@@ -8,15 +8,15 @@
   /* Light Mode Palette */
   --bg-main: #ffffff;
   --bg-secondary: #f5f5f5;
-  --text-main: #202020;
+  --text-main: #24292e;
   --text-muted: #595959;
-  --border-color: #e7e7e7;
+  --border-color: #dfe4e8;
   
   --color-gt: #2ca02c;
   --color-pred-a: #1f77b4;
   --color-pred-b: #d62728;
-  --color-accent: #a3464d;
-  --link-hover: #7f3037;
+  --color-accent: #285b83;
+  --link-hover: #173e5d;
 
   --font-heading: "Inter", sans-serif;
   --font-serif: var(--font-heading);
@@ -28,13 +28,13 @@
 }
 
 html[data-theme="dark"] {
-  --bg-main: #181818;
+  --bg-main: #20252b;
   --bg-secondary: #262626;
   --text-main: #eaeaea;
   --text-muted: #b5b5b5;
-  --border-color: #333333;
-  --color-accent: #efaa9f;
-  --link-hover: #ffc0b6;
+  --border-color: #3b4249;
+  --color-accent: #9cc7e8;
+  --link-hover: #c0def4;
   --chart-grid: rgba(255, 255, 255, 0.15);
   --chart-text: #cccccc;
 }
@@ -226,13 +226,13 @@ canvas {
 }
 
 .btn-primary {
-  background: var(--text-main);
+  background: var(--color-accent);
   color: var(--bg-main);
-  border-color: var(--text-main);
+  border-color: var(--color-accent);
 }
 
 .btn-primary:hover {
-  background: var(--text-muted);
+  background: var(--link-hover);
   color: var(--bg-main);
 }
 
@@ -323,7 +323,7 @@ section { scroll-margin-top: 30px }
 .btn { border-radius: 5px; transition: color .15s, border-color .15s, background-color .15s }
 a.btn { color: var(--color-accent); border-color: currentColor; background: transparent }
 a.btn:hover { color: var(--link-hover); background: var(--bg-secondary) }
-.btn-primary { color: var(--bg-main); background: var(--text-main); border-color: var(--text-main) }
+.btn-primary { color: var(--bg-main); background: var(--color-accent); border-color: var(--color-accent) }
 .citation-box pre { border: 0; background: var(--bg-secondary); border-radius: 5px }
 .slider-row input[type=range] { min-width: 0 }
 .toc-rail, .toc-dots { display: none }

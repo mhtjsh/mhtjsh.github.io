@@ -55,10 +55,22 @@ if (toggleBtn) {
 const menuBtn = document.getElementById('menuToggle');
 const navMenu = document.getElementById('navMenu');
 if (menuBtn && navMenu) {
-  menuBtn.onclick = () => navMenu.classList.toggle('open');
+  menuBtn.setAttribute('aria-controls', 'navMenu');
+  menuBtn.setAttribute('aria-expanded', 'false');
+  function setMenuOpen(open) {
+    navMenu.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+  }
+  menuBtn.onclick = () => setMenuOpen(!navMenu.classList.contains('open'));
   navMenu.querySelectorAll('a').forEach(a =>
-    a.addEventListener('click', () => navMenu.classList.remove('open'))
+    a.addEventListener('click', () => setMenuOpen(false))
   );
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && navMenu.classList.contains('open')) {
+      setMenuOpen(false);
+      menuBtn.focus();
+    }
+  });
 }
 
 // ==========================================
@@ -208,6 +220,14 @@ function updateTOC() {
 
   sectionIds.forEach(({ id, link }) => {
     const active = id === current;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+
+  // Keep the top navigation consistent with the contents index while scrolling.
+  document.querySelectorAll('.nav-menu a[href^="#"]').forEach(link => {
+    const active = link.getAttribute('href') === `#${current}`;
     link.classList.toggle('active', active);
     if (active) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');

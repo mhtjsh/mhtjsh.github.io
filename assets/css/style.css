@@ -7,18 +7,18 @@
   --bg: #ffffff;
   --surface: #ffffff;
   --surface-strong: #ffffff;
-  --text: #202020;
+  --text: #24292e;
   --text-light: #595959;
   --text-muted: #737373;
   --accent: #515151;
   --accent-hover: #111111;
   --accent-blue: #515151;
   --accent-blue-hover: #111111;
-  --link-color: #a3464d;
-  --link-hover: #7f3037;
-  --divider: #e7e7e7;
+  --link-color: #285b83;
+  --link-hover: #173e5d;
+  --divider: #dfe4e8;
   --card-bg: var(--surface);
-  --card-border: #e7e7e7;
+  --card-border: #dfe4e8;
   --sidebar-bg: #ffffff;
   --nav-bg: #ffffff;
   --ambient: transparent;
@@ -40,8 +40,8 @@
 
 /* ---------- Variables: Dark ---------- */
 html[data-theme="dark"] {
-  --bg: #181818;
-  --surface: #202020;
+  --bg: #20252b;
+  --surface: #24292e;
   --surface-strong: #262626;
   --text: #eaeaea;
   --text-light: #b5b5b5;
@@ -50,13 +50,13 @@ html[data-theme="dark"] {
   --accent-hover: #ffffff;
   --accent-blue: #bcbcbc;
   --accent-blue-hover: #ffffff;
-  --link-color: #efaa9f;
-  --link-hover: #ffc0b6;
-  --divider: #333333;
+  --link-color: #9cc7e8;
+  --link-hover: #c0def4;
+  --divider: #3b4249;
   --card-bg: var(--surface);
   --card-border: rgba(255,255,255,0.08);
-  --sidebar-bg: #181818;
-  --nav-bg: #181818;
+  --sidebar-bg: #20252b;
+  --nav-bg: #20252b;
   --ambient: transparent;
   --accent-soft: #262626;
   --tag-bg: #262626;

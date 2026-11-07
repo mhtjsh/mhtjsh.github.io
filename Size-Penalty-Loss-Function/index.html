@@ -31,8 +31,8 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=5">
-  <link rel="stylesheet" href="assets/css/typography.css?v=2">
+    <link rel="stylesheet" href="assets/css/styles.css?v=6">
+  <link rel="stylesheet" href="assets/css/typography.css?v=3">
 </head>
 <body class="thesis-project-page">
 
@@ -71,11 +71,15 @@
 
     <!-- Main Content Area -->
     <main class="article-content">
+        <nav class="project-breadcrumb" aria-label="Breadcrumb"><a href="../">Mohit Joshi</a><span aria-hidden="true">/</span><a href="../#research">Research</a><span aria-hidden="true">/</span><span aria-current="page">Size Penalty Loss</span></nav>
+        <a href="../technical/" class="project-writing-link">Technical Writeups →</a>
         <header class="reveal">
+            <p class="project-kicker">Size Penalty Loss · Undergraduate thesis</p>
             <h1><span class="article-title-main">"What Dice Misses":</span><span class="article-title-subtitle"> Size-Stratified Volume Regularization for Ischemic Stroke Lesion Segmentation</span></h1>
             <div class="authors">Mohit Joshi</div>
             <div class="affiliations">Koita Centre for Digital Health, Indian Institute of Technology Bombay</div>
-            <div style="text-align: center; margin-top: 25px; margin-bottom: 25px; display: flex; justify-content: center; gap: 15px;">
+            <div class="project-supervisor"><span class="detail-label">Supervised by</span> <a href="https://www.kcdh.iitb.ac.in/~kshitij/browser/" target="_blank" rel="noopener">Dr. Kshitij Jadhav</a></div>
+            <div class="project-resources">
                 <a href="../assets/docs/Thesis.pdf" class="btn btn-primary" target="_blank" style="text-decoration: none;"><i class="fa-solid fa-file-pdf"></i> Thesis PDF</a>
                 <a href="../assets/docs/presentation.pdf" class="btn" target="_blank" style="text-decoration: none;"><i class="fa-solid fa-desktop"></i> Slides</a>
             </div>
@@ -83,7 +87,7 @@
 
         <section id="introduction" class="reveal">
             <div class="abstract">
-                <strong>Abstract</strong>
+                <h2 class="abstract-title">Abstract</h2>
                 Traditional overlap metrics like the Dice Similarity Coefficient intrinsically bias optimization toward large lesion volumes, systematically neglecting micro-embolic lesions ($< 5 \text{ mL}$). We introduce the <b>Size Penalty Loss (SPL)</b>, an auxiliary loss function that explicitly conditions volume regularization on ground-truth lesion size. By employing a continuous exponential size-decay function, SPL applies a massive corrective gradient specifically to missed small lesions while leaving large, well-segmented lesions unaffected.
             </div>
 
